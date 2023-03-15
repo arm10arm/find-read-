@@ -78,7 +78,7 @@ export default {
     body {
       height: 100%;
     }
-
+ 
     nav,
     h1 {
       font-family: 'Gloock', serif;
