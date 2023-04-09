@@ -1,0 +1,30 @@
+{
+  "name": "find-read-webpro",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "autoprefixer": "^10",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-vue": "^5.16.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.2.0",
+    "postcss": "^8",
+    "tailwindcss": "^3",
+    "vue": "^3.2.47",
+    "vue-router": "^4.1.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.7",
+    "vite": "^4.1.4",
+    "vue-cli-plugin-tailwind": "~3.0.0"
+  }
+}
