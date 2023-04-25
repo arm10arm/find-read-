@@ -1,0 +1,34 @@
+<template>
+    <div id="app">
+        <div class="flex justify-center items-center h-screen bg-black" id="app">
+        <div class="w-96 p-6 shadow-lg bg-white rounded-xl">
+            <h1 class="block text-center text-3xl font-semibold"><i class="fa-regular fa-user"></i> Log In</h1>
+            <div class="mt-4">
+                <label for="username" class=" block text-base mb-2">Username</label>
+                <input type="text" id="username" placeholder="Enter your username"
+                    class=" border w-full rounded-sm py-2 focus:outline-none focus:ring-0 focus:border-gray-600">
+            </div>
+            <div class="mt-4">
+                <label for="password" class=" block text-base mb-2">Password</label>
+                <input type="password" id="password" placeholder="Enter your password"
+                    class=" border w-full rounded-sm py-2 focus:outline-none focus:ring-0 focus:border-gray-600">
+            </div>
+            <div class="flex justify-between items-center mt-3">
+                <div>
+                    <input type="checkbox">
+                    <label>Remember Me?</label>
+                </div>
+                <div>
+                    <a href="#" class="text-black font-semibold">Forgot Password?</a>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <button class="w-full bg-black text-white rounded-sm py-2">Log In</button>
+                <button class="w-full bg-black text-white rounded-sm py-2 mt-5">Sign Up</button>
+            </div>
+
+        </div>
+    </div>
+    </div>
+</template>
