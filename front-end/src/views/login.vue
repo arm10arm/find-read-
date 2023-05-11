@@ -25,10 +25,14 @@
 
             <div class="mt-5">
                 <button class="w-full bg-black text-white rounded-sm py-2">Log In</button>
-                <button class="w-full bg-black text-white rounded-sm py-2 mt-5">Sign Up</button>
+                <router-link to = "/signup"><span class="w-full bg-black text-white rounded-sm py-2 mt-5">Sign Up</span></router-link>
             </div>
 
         </div>
     </div>
     </div>
 </template>
+
+<script setup>
+import axios from "axios";
+</script>

@@ -1,0 +1,62 @@
+<script setup>
+import navcomp from '../components/navbar.vue'
+import axios from "axios";
+</script>
+
+<template>
+    <div id='app'>
+        <navcomp></navcomp>
+        <h1 class="text-5xl text-center text-black underline underline-offset-8">Wishlist</h1><br><br>
+
+        <section class="w-full h-auto flex justify-center">
+            <div class="grid grid-cols-5 gap-x-12 gap-y-14">
+                <div class="h-full w-48 mr-6" v-for="items in items">
+                    <div class="top flex justify-center w-full h-48">
+                        <img class="h-full object-fit" :src="getimg(items.book_img)">
+                    </div>
+                    <div class="content text-zinc-800	 w-auto h-32 text-sm">
+                        <p class="pt-4">ชื่อ:{{ items.book_name }}</p>
+                        <p class="pt-1">แนว:{{ items.book_type }}</p>
+                        <p class="pt-1 pb-2">ผู้เขียน:{{ items.author }}</p>
+                        <p class="pt-1 pb-2">สํานักพิมพ์:{{ items.publisher }}</p>
+                    </div>
+                    <router-link :to="{ name: 'books', params: { id: items.book_id } }"><button
+              class="w-full bg-zinc-900 text-zinc-300	h-10 rounded-lg">อ่านเพิ่มเติม</button></router-link>
+                    <button class="w-full bg-red-500 text-zinc-300	h-10 rounded-lg mt-5">นำออกจาก
+                        Wishlist</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      items: []
+    }
+  },
+  mounted() {
+    this.getwish();
+  },
+  methods: {
+    getwish() {
+      axios
+        .get("http://localhost:3000/wishlist", {
+        })
+        .then((response) => {
+          this.items = response.data.wish;
+          console.log(this.items)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    getimg(img) {
+      return "http://localhost:3000/" + img;
+    }
+  }
+}
+
+</script>

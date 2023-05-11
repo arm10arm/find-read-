@@ -7,7 +7,7 @@
             <p class="subtitle text-neutral-800	">
                 Let's see what do you want
             </p>
-            <RouterLink to="/"><button class="w-20 h-7 bg-slate-600	adjust rounded-lg"><span  class ="text-neutral-800">Let's see</span></button></RouterLink>
+            <RouterLink to="/home"><button class="w-20 h-7 bg-slate-600	adjust rounded-lg"><span  class ="text-neutral-800">Let's see</span></button></RouterLink>
         </div>
     </div>
 </template>
