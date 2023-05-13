@@ -19,6 +19,7 @@ const userRouter = require('./route/user')
 app.use(indexRouter.router)
 // app.use(blogRouter.router)
 app.use(commentRouter.router)
+app.use(userRouter.router)
 
 app.listen(3000, () => {
   console.log(`Example app listening at http://localhost:3000`)
