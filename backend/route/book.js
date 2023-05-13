@@ -35,7 +35,7 @@ router.post("/books",upload.single('book_image'),async function (req, res) {
     await conn.beginTransaction();
 
     try {
-        let results = await conn.query(
+        let results = await pool.query(
           "INSERT INTO  books(book_name, author, book_type, publisher, book_img, contents,add_by_id) VALUES(?, ?, ?, ?, ?, ?,1);",
           [book_name,author,book_type,publisher,file.path.substr(6),content]
         )
@@ -58,12 +58,12 @@ router.get("/books", async function (req, res) {
     await conn.beginTransaction();
 
     try {
-        const [row] = await conn.query(
+        const [row] = await pool.query(
           "select * from books",
         )
         console.log(row)
         await conn.commit()
-        res.json(row)
+        res.json({books:row})
       } catch (err) {
         console.log(err)
         await conn.rollback();
@@ -77,17 +77,28 @@ router.get("/books", async function (req, res) {
 
 //show book
 router.get("/book/:id", async function (req, res) {
-  const promise1 = pool.query("SELECT * FROM books WHERE book_id=?", [req.params.id]);
-  Promise.all([promise1])
-    .then((results) => {
-      const book = results[0];
-      res.json({
-        book: book[0]
-      });
-    })
-    .catch((err) => {
-      return next(err);
-    });
+  const conn = await pool.getConnection()
+    // Begin transaction
+    await conn.beginTransaction();
+
+    try {
+        const [row] = await pool.query(
+          "select * from books where book_id = ?", [req.params.id]
+        )
+        const [row1] = await pool.query(
+          "SELECT * FROM `like` WHERE book_id=?", [req.params.id]
+        )
+        await conn.commit()
+        console.log(row1)
+        res.json({book:row,like:row1})
+      } catch (err) {
+        console.log(err)
+        await conn.rollback();
+        res.json(err)
+      } finally {
+        console.log('finally')
+        conn.release();
+      }
 })
 
 //update book
@@ -133,5 +144,27 @@ router.get("/wishlist", async function(req,res){
     .catch((err) => {
       return next(err);
     });
+})
+
+//create like
+router.post("/like/:id", async function(req,res){
+  const conn = await pool.getConnection()
+  // Begin transaction
+  await conn.beginTransaction();
+  try{
+    const [create] = await pool.query("insert into `like`(like_by_id,book_id, `like`) values(?,?,1)", [1, req.params.id])
+    console.log(create)
+    res.json({
+      message: "complete"
+    });
+  }
+  catch (err) {
+    console.log(err)
+    await conn.rollback();
+  }
+  finally {
+    console.log('finally')
+    conn.release();
+  }
 })
 exports.router = router;

@@ -12,7 +12,7 @@ router.post("/:id/comments", async function (req, res) {
         // Begin transaction
         await conn.beginTransaction();
         try {
-            const [rows1, fields1] = await conn.query(
+            const [rows1, fields1] = await pool.query(
                 'INSERT INTO `commentssss` (`comment`, `book_id`, `comment_by_id`) VALUES (?, ?, 1)',
                 [comment, req.params.id]
             )

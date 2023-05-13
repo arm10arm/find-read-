@@ -57,7 +57,7 @@ export default {
         .get("http://localhost:3000/books", {
         })
         .then((response) => {
-          this.items = response.data;
+          this.items = response.data.books;
           console.log(this.items)
         })
         .catch((err) => {

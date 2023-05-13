@@ -15,18 +15,24 @@ import axios from "axios";
                     <div class="img-container w-full h-80 flex justify-center">
                         <img :src="getimg(item.book_img)">
                     </div>
+                    <button class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
+                        style="font-family: 'Gloock', serif;" v-if="like.length === 0 || like.like === 0">Like ({{
+                            like.length }})</button>
+                    <button class="bg-red-600 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
+                        style="font-family: 'Gloock', serif;" v-else>UnLike ({{
+                            like.length }})</button>
                 </div>
-                <div class="right w-full ml-4">
-                    <div class="content-top">
+                <div class="right ml-4" style="width: 600px;">
+                    <div class="content-top w-full">
                         <p>Name: {{ item.book_name }}</p>
                         <p>Type: {{ item.book_type }}</p>
                         <p>Author: {{ item.author }}</p>
                         <p>Publisher: {{ item.publisher }}</p>
-                        <p>Title: {{ item.content }}</p>
+                        <p>Title:</p>
                     </div>
                     <div class="content-bottom flex mt-2 ml-2">
                         <div class="info" style="width: 650px; height: 245px;">
-                            <p></p>
+                            <p>{{ item.contents }}</p>
                         </div>
                     </div>
                 </div>
@@ -54,6 +60,7 @@ export default {
         return {
             item: {},
             comments: [],
+            like: [],
             comment: ''
         }
     },
@@ -61,7 +68,7 @@ export default {
         axios.get(`http://localhost:3000/book/${this.$route.params.id}`)
             .then((response) => {
                 this.item = response.data.book[0];
-                console.log(this.item)
+                this.like = response.data.like;
             })
             .catch((err) => {
                 console.log(err);
