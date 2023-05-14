@@ -11,6 +11,7 @@
               <router-link to=""><span class="ml-5 text-slate-200 hover:text-black">About us</span></router-link>
               <router-link to="/catagories"><span  class="ml-5 text-slate-200 hover:text-black">Categories</span></router-link>
               <router-link to="/wishlist"><span  class="ml-5 text-slate-200 hover:text-black">Wishlist</span></router-link>
+              <router-link to="/admin"><span  class="ml-5 text-slate-200 hover:text-black">Admin</span></router-link>
           </div>
         <!------------------->
 

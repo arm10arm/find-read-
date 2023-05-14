@@ -11,6 +11,7 @@ import admin from '../views/admin.vue'
 import managebooks from '../views/managebook.vue'
 import user from '../views/user.vue'
 import banuser from '../views/banuser.vue'
+import editbook from '../views/editbook.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -83,6 +84,11 @@ const router = createRouter({
       path: '/banuser',
       name: 'banuser',
       component: banuser
+    },
+    {
+      path: '/editbook',
+      name: 'editbook',
+      component: editbook
     }
   ]
 })

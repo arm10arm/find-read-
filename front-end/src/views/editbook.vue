@@ -1,12 +1,12 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
-import axios from "axios";
+import axios from 'axios';
 </script>
 
 <template>
-    <div id='app'>
+    <div id = "app">
         <navcomp></navcomp>
-        <h1 class="text-5xl text-center text-black underline underline-offset-8">Addbook</h1><br><br>
+        <h1 class="text-5xl text-center text-black underline underline-offset-8">Edit book</h1><br><br>
         <div class="flex justify-center items-center" style="width: 100%; height: 700px; background-color: bisque;">
             <form>
                 <label>ชื่อหนังสือ:</label>
@@ -34,46 +34,8 @@ import axios from "axios";
         </div>
     </div>
 </template>
-
-
-
 <script>
 export default {
-    data() {
-        return {
-            name: '',
-            type: '',
-            author: '',
-            content: '',
-            publisher: '',
-            file: null
-        }
-    },
-    methods: {
-        handleFileUpload() {
-            console.log('In')
-            this.file = this.$refs.file.files[0];
-        },
-        submit() {
-            var formData = new FormData();
-            formData.append("book_name", this.name);
-            formData.append("book_type", this.type)
-            formData.append("book_author", this.author)
-            formData.append("content", this.content)
-            formData.append("publisher", this.publisher)
-            formData.append("book_image", this.file)
-            axios.post('http://localhost:3000/books', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }).then(response => {
-                console.log(response);
-                this.$router.push({ path: '/categories' }) // Success! -> redirect to home page
-            })
-                .catch(error => {
-                    console.log(error.message);
-                });
-        }
-    }
+
 }
 </script>

@@ -7,7 +7,7 @@ import axios from "axios";
     <div id="app">
         <navcomp></navcomp>
         <h1 class="text-5xl text-center text-black underline underline-offset-8">Manage books</h1><br><br>
-
+        <div class="w-full flex justify-center" style="height: 70px;"><router-link to="/add"><button class = "bg-gray-900 text-white rounded-lg" style="width: 75px; height: 50px;">Add</button></router-link></div>
         <table class = "w-full text-center border-collapse">
             <thead>
                 <th class = "border-4 border-stone-500">Id</th>
@@ -17,15 +17,15 @@ import axios from "axios";
                 <th class = "border-4 border-stone-500">Img</th>
                 <th class = "border-4 border-stone-500">Action</th>
             </thead>
-            <tbody>
-                <td class="border-4 border-stone-500">1</td>
-                <td class="border-4 border-stone-500">asdf</td>
-                <td class="border-4 border-stone-500">asdff</td>
-                <td class="border-4 border-stone-500">sdfg</td>
-                <td class="border-4 border-stone-500">dcbvbfb</td>
-                <td class="border-4 border-stone-500">
-                    <button>Edit</button>
-                    <button class="ml-4">Delete</button>
+            <tbody v-for = "items in items">
+                <td class="border-4 border-stone-500">{{ items.book_id }}</td>
+                <td class="border-4 border-stone-500">{{ items.book_name }}</td>
+                <td class="border-4 border-stone-500">{{ items.book_type }}</td>
+                <td class="border-4 border-stone-500">{{ items.author }}</td>
+                <td class="border-4 border-stone-500 justify-center" style="width:200px;"><img :src ="getimg(items.book_img)" style = "width:200px; height:200px;"></td>
+                <td class="border-4 border-stone-500" style="width: 300px;">
+                    <router-link to="/editbook"><button class = "bg-yellow-400 rounded-lg" style="width: 75px; height: 50px;" @click="sendtoedit(items)">Edit</button></router-link>
+                    <button class="ml-4 bg-red-400 rounded-lg" style="width: 75px; height: 50px;">Delete</button>
                 </td>
             </tbody>
         </table>
@@ -33,6 +33,33 @@ import axios from "axios";
 </template>
 <script>
 export default {
-
+    data() {
+    return {
+      items: []
+    }
+  },
+  mounted() {
+    this.getbooks();
+  },
+  methods: {
+    getbooks() {
+      axios
+        .get("http://localhost:3000/books", {
+        })
+        .then((response) => {
+          this.items = response.data.books;
+          console.log(this.items)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    getimg(img) {
+      return "http://localhost:3000/" + img;
+    },
+    sendtoedit(book){
+        
+    }
+  }
 }
 </script>
