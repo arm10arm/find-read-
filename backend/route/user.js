@@ -113,16 +113,17 @@ router.post('/user/login', async (req, res, next) => {
 
         // Check if token already existed
         const [tokens] = await conn.query(
-            'SELECT * FROM tokens WHERE user_id=?',
-            [user.id]
+            'SELECT * FROM tokens WHERE token_user_id=?',
+            [user.user_id]
         )
+        console.log(user)
         let token = tokens[0]?.token
         if (!token) {
             // Generate and save token into database
             token = generateToken()
             await conn.query(
-                'INSERT INTO tokens(user_id, token) VALUES (?, ?)',
-                [user.id, token]
+                'INSERT INTO tokens(token_user_id, token) VALUES (?, ?)',
+                [user.user_id, token]
             )
         }
 
