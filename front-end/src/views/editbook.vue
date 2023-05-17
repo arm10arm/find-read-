@@ -36,6 +36,55 @@ import axios from 'axios';
 </template>
 <script>
 export default {
-
+    data() {
+        return {
+            name: '',
+            type: '',
+            author: '',
+            content: '',
+            publisher: '',
+            file: null,
+        }
+    },
+    created() {
+        axios.get(`http://localhost:3000/book/${this.$route.params.id}`)
+            .then((response) => {
+                this.name = response.data.book[0].book_name;
+                this.type = response.data.book[0].book_type;
+                this.author = response.data.book[0].author;
+                this.publisher = response.data.book[0].publisher;
+                this.content = response.data.book[0].contents;
+                this.file = response.data.book[0].book_img;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    },
+    methods: {
+        handleFileUpload() {
+            console.log('In')
+            this.file = this.$refs.file.files[0];
+        },
+        submit() {
+            var formData = new FormData();
+            formData.append("book_name", this.name);
+            formData.append("book_type", this.type)
+            formData.append("book_author", this.author)
+            formData.append("content", this.content)
+            formData.append("publisher", this.publisher)
+            formData.append("book_image", this.file)
+            axios.put('http://localhost:3000/books', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                console.log(response);
+                this.$router.push({ path: '/managebook' }) // Success! -> redirect to home page
+            })
+                .catch(error => {
+                    console.log(error.message);
+                });
+        }
+    }
 }
 </script>

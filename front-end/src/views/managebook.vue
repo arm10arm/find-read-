@@ -24,7 +24,7 @@ import axios from "axios";
                 <td class="border-4 border-stone-500">{{ items.author }}</td>
                 <td class="border-4 border-stone-500 justify-center" style="width:200px;"><img :src ="getimg(items.book_img)" style = "width:200px; height:200px;"></td>
                 <td class="border-4 border-stone-500" style="width: 300px;">
-                    <router-link to="/editbook"><button class = "bg-yellow-400 rounded-lg" style="width: 75px; height: 50px;" @click="sendtoedit(items)">Edit</button></router-link>
+                    <router-link :to="{ name: 'editbook', params: { id: items.book_id } }"><button class = "bg-yellow-400 rounded-lg" style="width: 75px; height: 50px;">Edit</button></router-link>
                     <button class="ml-4 bg-red-400 rounded-lg" style="width: 75px; height: 50px;">Delete</button>
                 </td>
             </tbody>
@@ -56,9 +56,6 @@ export default {
     },
     getimg(img) {
       return "http://localhost:3000/" + img;
-    },
-    sendtoedit(book){
-        
     }
   }
 }

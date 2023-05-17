@@ -25,10 +25,10 @@ import axios from 'axios';
             <img class="h-full object-fit" :src="getimg(items.book_img)">
           </div>
           <div class="content text-zinc-800	 w-auto h-32 text-sm">
-            <p class="pt-4">ชื่อ: {{ items.book_name }}</p>
-            <p class="pt-1">แนว: {{ items.book_type }}</p>
-            <p class="pt-1">ผู้เขียน: {{ items.author }}</p>
-            <p class="pt-1 pb-2">สํานักพิมพ์: {{ items.publisher }}</p>
+            <p class="pt-4 break-all">ชื่อ: {{ items.book_name }}</p>
+            <p class="pt-1 break-all">แนว: {{ items.book_type }}</p>
+            <p class="pt-1 break-all">ผู้เขียน: {{ items.author }}</p>
+            <p class="pt-1 pb-2 break-all">สํานักพิมพ์: {{ items.publisher }}</p>
           </div><br><br>
           <router-link :to="{ name: 'books', params: { id: items.book_id } }"><button
               class="w-full bg-zinc-900 text-zinc-300	h-10 rounded-lg">อ่านเพิ่มเติม</button></router-link>

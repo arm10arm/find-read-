@@ -86,7 +86,7 @@ const router = createRouter({
       component: banuser
     },
     {
-      path: '/editbook',
+      path: '/editbook/:id',
       name: 'editbook',
       component: editbook
     }

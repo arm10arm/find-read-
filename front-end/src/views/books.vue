@@ -16,7 +16,7 @@ import axios from "axios";
                         <img :src="getimg(item.book_img)">
                     </div>
                     <button class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
-                        style="font-family: 'Gloock', serif;" v-if="like.length === 0 || like.like === 0">Like ({{
+                        style="font-family: 'Gloock', serif;" v-if="like[0].like === 0" @click="addlike()">Like ({{
                             like.length }})</button>
                     <button class="bg-red-600 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
                         style="font-family: 'Gloock', serif;" v-else>UnLike ({{
@@ -24,15 +24,15 @@ import axios from "axios";
                 </div>
                 <div class="right ml-4" style="width: 600px;">
                     <div class="content-top w-full">
-                        <p>Name: {{ item.book_name }}</p>
-                        <p>Type: {{ item.book_type }}</p>
-                        <p>Author: {{ item.author }}</p>
-                        <p>Publisher: {{ item.publisher }}</p>
-                        <p>Title:</p>
+                        <p class="break-all">Name: {{ item.book_name }}</p>
+                        <p class="break-all">Type: {{ item.book_type }}</p>
+                        <p class="break-all">Author: {{ item.author }}</p>
+                        <p class="break-all">Publisher: {{ item.publisher }}</p>
+                        <p class="break-all">Title:</p>
                     </div>
                     <div class="content-bottom flex mt-2 ml-2">
                         <div class="info" style="width: 650px; height: 245px;">
-                            <p>{{ item.contents }}</p>
+                            <p class="break-all">{{ item.contents }}</p>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,32 @@ import axios from "axios";
                         v-model="comment" name="comment">
                 </div><br>
                 <div class="box-comment w-full pt-4" style="height: 500px; overflow: scroll;">
-                    <h1 v-for="comment in comments">{{ comment.comment }}</h1>
+                    <div class="flex" v-for="(comments, index) in comments" style="width: 800px; height: 170px;">
+                        <div class="h-full" style="width: 150px;">
+                            <p class="break-all">img</p>
+                        </div>
+                        <div class="ml-2 w-full">
+                            <div style="height: 25px;">
+                                <p>username</p>
+                            </div>
+                            <div v-if="wantedit === index" class="w-full mt-3" style="height: 100px; overflow: scroll;">
+                                <textarea class ="bg-slate-300" v-model="commentedit" style="width: 100%;"></textarea>
+                            </div>
+                            <div v-else class="w-full mt-3" style="height: 100px; overflow: scroll;">
+                                <p>{{ comments.comment }}</p>
+                            </div>
+                            <div class="flex justify-end mr-4">
+                                <button class="bg-red-400" style="height: 40px; width: 75px;">Delete</button>
+                                <button v-if="wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
+                                    @click="wantedit = -1">cancel</button>
+                                <button v-if = "wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
+                                    @click="wantedit = -1; updatecomm()">Confirm</button>
+                                <button v-else class="bg-yellow-400" style="height: 40px; width: 75px;"
+                                    @click="wantedit = index; commentedit = comments.comment">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <h1 v-for="comment in comments">{{ comment.comment }}</h1> -->
                 </div>
             </div>
         </section>
@@ -61,7 +86,10 @@ export default {
             item: {},
             comments: [],
             like: [],
-            comment: ''
+            comment: '',
+            wantedit: -1,
+            commentedit: '',
+            like_of_id:{}
         }
     },
     created() {
@@ -100,6 +128,29 @@ export default {
                 });
             this.comment = "";
         },
+        updatecomm(){
+            axios
+            .put(`http://localhost:3000/${this.$route.params.id}/comments`,{
+                comment: this.commentedit
+            })
+            .then((response) => {
+                    this.commentedit.push(response.data);
+                })
+                .catch((error) => {
+                    this.error = error.response.data.message;
+                });
+        },
+        // addlike(){
+        //     axios
+        //     .post(`http://localhost:3000/like/${this.$route.params.id}`)
+        //     .then((response) => {
+        //             console.log(response.data);
+        //         })
+        //         .catch((error) => {
+        //             this.error = error.response.data.message;
+        //         });
+        // },
+        
     }
 }
 </script>
