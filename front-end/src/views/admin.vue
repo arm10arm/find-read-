@@ -26,7 +26,7 @@ import axios from "axios";
                 <h1 class="text-lg font-bold mt-4 text-center">สมาชิกที่ถูกแบน</h1>
             </router-link>
         </div>
-        </div>
+        </div><br>
         <footcomp></footcomp>
     </div>
 </template>
