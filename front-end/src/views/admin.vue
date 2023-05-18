@@ -1,5 +1,6 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
+import footcomp from '../components/footer.vue'
 import axios from "axios";
 
 </script>
@@ -26,11 +27,12 @@ import axios from "axios";
             </router-link>
         </div>
         </div>
+        <footcomp></footcomp>
     </div>
 </template>
 <script>
 export default {
-    
+
 }
 </script>
 <style scoped></style>

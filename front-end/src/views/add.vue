@@ -1,5 +1,6 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
+import footcomp from '../components/footer.vue'
 import axios from "axios";
 </script>
 
@@ -32,6 +33,7 @@ import axios from "axios";
                 <button type="submit" @click="submit()">submit</button>
             </form>
         </div>
+        <footcomp></footcomp>
     </div>
 </template>
 
