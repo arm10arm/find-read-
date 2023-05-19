@@ -13,10 +13,13 @@
                 <input type="password" v-model="password" id="password" placeholder="Enter your password"
                     class=" border w-full rounded-sm py-2 px-3 focus:outline-none focus:ring-0 focus:border-gray-600">
             </div>
+            <div v-if="error">
+                <p class="text-red-500 mt-2"><b>{{ error }}</b></p>
+            </div>
             <div class="flex justify-between items-center mt-3">
                 <div>
                     <input type="checkbox">
-                    <label>Remember Me?</label>
+                    <label> Remember Me?</label>
                 </div>
                 <div>
                     <a href="#" class="text-black font-semibold">Forgot Password?</a>
