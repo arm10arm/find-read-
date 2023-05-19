@@ -12,6 +12,7 @@ import managebooks from '../views/managebook.vue'
 import user from '../views/user.vue'
 import banuser from '../views/banuser.vue'
 import editbook from '../views/editbook.vue'
+import profile from '../views/profile.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -89,6 +90,11 @@ const router = createRouter({
       path: '/editbook/:id',
       name: 'editbook',
       component: editbook
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: profile
     }
   ]
 })
