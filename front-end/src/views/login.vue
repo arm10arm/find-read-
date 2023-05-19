@@ -6,12 +6,12 @@
             <div class="mt-4">
                 <label for="username" class=" block text-base mb-2">Username</label>
                 <input type="text" v-model="username" id="username" placeholder="Enter your username"
-                    class=" border w-full rounded-sm py-2 focus:outline-none focus:ring-0 focus:border-gray-600">
+                    class=" border w-full rounded-sm py-2 px-3 focus:outline-none focus:ring-0 focus:border-gray-600">
             </div>
             <div class="mt-4">
                 <label for="password" class=" block text-base mb-2">Password</label>
                 <input type="password" v-model="password" id="password" placeholder="Enter your password"
-                    class=" border w-full rounded-sm py-2 focus:outline-none focus:ring-0 focus:border-gray-600">
+                    class=" border w-full rounded-sm py-2 px-3 focus:outline-none focus:ring-0 focus:border-gray-600">
             </div>
             <div class="flex justify-between items-center mt-3">
                 <div>
@@ -56,6 +56,7 @@ export default {
         alert('Login successful')
         const token = res.data.token                                
         localStorage.setItem('token', token)
+        localStorage.setItem('role', res.data.role)
         this.$emit('auth-change')
         this.$router.push({path: 'home'})
     })
