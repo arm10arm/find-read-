@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <navcomp></navcomp>
-        <div class="flex flex-row">
+        <div v-if="user" class="flex flex-row">
             <div class="w-1/4 bg-slate-700 h-screen">
                 <div class="md:w-3/12 md:ml-16">
                     <!-- profile image -->
