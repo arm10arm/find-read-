@@ -15,9 +15,10 @@ const indexRouter = require('./route/book')
 // const blogRouter = require('./routes/blog')
 const commentRouter = require('./route/comment')
 const userRouter = require('./route/user')
+const memberRouter = require('./route/member')
 
 app.use(indexRouter.router)
-// app.use(blogRouter.router)
+app.use(memberRouter.router)
 app.use(commentRouter.router)
 app.use(userRouter.router)
 
