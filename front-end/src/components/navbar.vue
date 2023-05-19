@@ -42,7 +42,7 @@ export default {
       logout () {
       localStorage.removeItem('token')
       this.$emit('auth-change')
-      window.location = '/home'
+      window.location = '/'
     },
     onAuthChange () {
       const token = localStorage.getItem('token')
