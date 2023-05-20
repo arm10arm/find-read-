@@ -145,4 +145,41 @@ router.get('/user/me', isLoggedIn, async (req, res, next) => {
 })
 
 
+router.put('/user/update/:id', async (req, res, next) => {
+    const conn = await pool.getConnection()
+    const username = req.body.username
+    const first_name = req.body.first_name
+    const last_name = req.body.last_name
+    const email = req.body.email
+
+    const updateSchema = Joi.object({
+        username: Joi.string().required(),
+        first_name: Joi.string().required().max(150),
+        last_name: Joi.string().required().max(150),
+        email: Joi.string().required().email(),
+    })
+    
+    // Begin transaction
+    await conn.beginTransaction();
+    try {
+        await updateSchema.validateAsync(req.body, { abortEarly: false })
+    } catch (err) {
+        return res.status(400).send(err)
+    }
+    try {
+        const [row] = await pool.query("UPDATE user SET username = ?, first_name = ?, last_name = ?, email = ? WHERE user_id = ?", 
+        [username, first_name, last_name, email, req.params.id])
+        console.log(row)
+        await conn.commit()
+        res.json({ message: "Update success" })
+    } catch (err) {
+        console.log(err)
+        await conn.rollback();
+        res.json(err)
+    } finally {
+        console.log('finally')
+        conn.release();
+    }
+})
+
 exports.router = router
