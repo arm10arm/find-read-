@@ -22,24 +22,40 @@
                         <div class="py-4 px-8">
                             <div class="mb-4">
                                 <label class="block text-grey-darker text-sm font-bold mb-2" for="username">Username</label>
-                                <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="username" type="text" placeholder="New Username">
+                                <input v-model="v$.username.$model" :class="{'border-2 border-rose-500': v$.username.$error}" class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="username" type="text" placeholder="New Username">
                             </div>
+                            <template v-if="v$.username.$error">
+                                <p class="text-rose-500" v-if="v$.username.$errors[0].$validator == 'required'"><b>Username is required !</b></p>
+                                <p class="text-rose-500" v-if="v$.username.$errors[0].$validator == 'minLength'"><b>Username must be at least 8 Characters !</b></p>
+                            </template>
                             <div class="flex mb-4">
                                 <div class="w-1/2 mr-1">
                                     <label class="block text-grey-darker text-sm font-bold mb-2" for="first_name">First Name</label>
-                                    <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="first_name" type="text" placeholder="New First Name">
+                                    <input v-model="v$.first_name.$model" :class="{'border-2 border-rose-500': v$.first_name.$error}" class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="first_name" type="text" placeholder="New First Name">
                                 </div>
                                 <div class="w-1/2 ml-1">
                                     <label class="block text-grey-darker text-sm font-bold mb-2" for="last_name">Last Name</label>
-                                    <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="last_name" type="text" placeholder="New Last Name">
+                                    <input v-model="v$.last_name.$model" :class="{'border-2 border-rose-500': v$.last_name.$error}" class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="last_name" type="text" placeholder="New Last Name">
                                 </div>
                             </div>
+                            <template v-if="v$.first_name.$error">
+                                <p class="text-rose-500" v-if="v$.first_name.$errors[0].$validator == 'required'"><b>First Name field is required !</b></p>
+                                <p class="text-rose-500" v-if="v$.first_name.$errors[0].$validator == 'maxLength'"><b>Invalid First Name !</b></p>
+                            </template>
+                            <template v-if="v$.last_name.$error">
+                                <p class="text-rose-500" v-if="v$.last_name.$errors[0].$validator == 'required'"><b>Last Name field is required !</b></p>
+                                <p class="text-rose-500" v-if="v$.last_name.$errors[0].$validator == 'maxLength'"><b>Invalid Last Name !</b></p>
+                            </template>
                             <div class="mb-4">
                                 <label class="block text-grey-darker text-sm font-bold mb-2" for="email">Email Address</label>
-                                <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="email" type="email" placeholder="New Email Address">
+                                <input v-model="v$.email.$model" :class="{'border-2 border-rose-500': v$.email.$error}" class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="email" type="email" placeholder="New Email Address">
+                                <template v-if="v$.email.$error">
+                                    <p class="text-rose-500" v-if="v$.email.$errors[0].$validator == 'required'"><b>Email is required !</b></p>
+                                    <p class="text-rose-500" v-if="v$.email.$errors[0].$validator == 'email'"><b>Invalid email !</b></p>
+                                </template>
                             </div>
                             <div class="flex items-center justify-between mt-8">
-                                <button class="bg-black text-white font-bold py-2 px-4 rounded-md" type="submit">
+                                <button class="bg-black text-white font-bold py-2 px-4 rounded-md" type="submit" @click="updateUser(user.user_id)">
                                     Update
                                 </button>
                             </div>
@@ -53,15 +69,22 @@
 <script>
 import navcomp from '../components/navbar.vue'
 import axios from '@/plugins/axios'
+import useValidate from '@vuelidate/core'
+import { required, email, minLength, maxLength } from '@vuelidate/validators'
 
 export default {
-    name: 'Home',
     components: {
         navcomp
     },
     data() {
         return {
-            user: null
+            v$: useValidate(),
+            user: null,
+            username: '',
+            first_name: '',
+            last_name: '',
+            email: '',
+            user_id: ''
         }
     },
     mounted () {
@@ -78,8 +101,42 @@ export default {
             axios.get('/user/me').then(res => {
                 this.user = res.data
                 localStorage.setItem('role', JSON.stringify(res.data.role))
+                this.username = res.data.username
+                this.first_name = res.data.first_name
+                this.last_name = res.data.last_name 
+                this.email = res.data.email
+                this.user_id = res.data.id
             })
         },
-    }
-    }
+        updateUser(user_id){
+            this.v$.$validate()
+            if (this.v$.$error) {
+                alert("Please fill all the fields correctly !")
+            }
+            else{
+                let updateData = {
+                    username: this.username,
+                    email: this.email,
+                    first_name: this.first_name,
+                    last_name: this.last_name,
+                }
+
+                axios.put(`/user/update/${user_id}`, updateData).then(res => {
+                    alert("Profile updated successfully !")
+                    this.user = res.data.user;
+                    window.location.reload();
+                    console.log(res.data.user);
+                })
+            }
+        }
+    },
+    validations () {
+        return {
+            username: { required, minLength: minLength(8) },
+            email: { required, email },
+            first_name: { required, maxLength: maxLength(150) },
+            last_name: { required, maxLength: maxLength(150) }
+        }
+    },
+}
 </script>
