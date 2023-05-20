@@ -1,35 +1,64 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
-import axios from "axios";
+import axios from '@/plugins/axios';
 </script>
 
 <template>
     <div id="app">
         <navcomp></navcomp>
-        <h1 class="text-5xl text-center text-black underline underline-offset-8">Manage books</h1><br><br>
-
-        <table class="w-full text-center border-collapse">
-            <thead>
-                <th class="border-4 border-stone-500">Id</th>
-                <th class="border-4 border-stone-500">Username</th>
-                <th class="border-4 border-stone-500">Firstname</th>
-                <th class="border-4 border-stone-500">Lastname</th>
-                <th class="border-4 border-stone-500">Phone</th>
-                <th class="border-4 border-stone-500">Action</th>
-            </thead>
-            <tbody>
-                <td class="border-4 border-stone-500">1</td>
-                <td class="border-4 border-stone-500">asdf</td>
-                <td class="border-4 border-stone-500">asdff</td>
-                <td class="border-4 border-stone-500">sdfg</td>
-                <td class="border-4 border-stone-500">00000000</td>
-                <td class="border-4 border-stone-500"><button>unban</button></td>
-            </tbody>
-        </table>
+        <h1 class="text-5xl text-center text-black underline underline-offset-8 mt-6">Manage Banned Users</h1><br><br>
+        <div class="flex items-center justify-center">
+            <table class="w-3/4 text-center border-collapse">
+                <thead>
+                    <th class="bg-black text-white text-xl">ID</th>
+                    <th class="bg-black text-white text-xl">Username</th>
+                    <th class="bg-black text-white text-xl">Name</th>
+                    <th class="bg-black text-white text-xl">Email</th>
+                    <th class="bg-black text-white text-xl">Action</th>
+                </thead>
+                <tbody v-for="(item, index) in member" :key="item.id">
+                    <td class="bg-slate-400 text-lg"><b>{{ index + 1 }}</b></td>
+                    <td class="bg-slate-400 text-lg"><b>{{ item.username }}</b></td>
+                    <td class="bg-slate-400 text-lg"><b>{{ item.first_name + " " + item.last_name }}</b></td>
+                    <td class="bg-slate-400 text-lg"><b>{{ item.email }}</b></td>
+                    <td class="bg-slate-400"><button class="w-24 h-10 rounded-lg bg-rose-500 text-white my-2 mx-2" @click="unBanMember(item.user_id)">Unban</button></td>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 <script>
 export default {
-
+    data(){
+        return{
+            user: null,
+            member: [],
+        };
+    },
+    mounted() {
+        this.getBannedMember();
+    },
+    methods: {
+        getBannedMember(){
+            axios.get('/banmembers').then(res => {
+                this.member = res.data.user;
+                console.log(res.data.user);
+            })
+            .catch((err) => {
+                console.log(err);
+        });
+        },
+        unBanMember(user_id){
+            console.log(user_id);
+            axios.put(`/banmembers/${user_id}`).then(res => {
+                this.member = res.data.user;
+                window.location.reload();
+                console.log(res.data.user);
+            })
+            .catch((err) => {
+                console.log(err);
+        });
+        }
+    }
 }
 </script>
