@@ -12,7 +12,7 @@ router.post("/:id/comments", async function (req, res) {
   // Begin transaction
   await conn.beginTransaction();
   try {
-    const [rows1, fields1] = await pool.query(
+    const [rows1, fields1] = await conn.query(
       'INSERT INTO `commentssss` (`comment`, `book_id`, `comment_by_id`) VALUES (?, ?, 1)',
       [comment, req.params.id]
     )
@@ -48,7 +48,7 @@ router.put("/comments/:id", async function (req, res) {
   // Begin transaction
   await conn.beginTransaction();
   try {
-    const [rows1, fields1] = await pool.query(
+    const [rows1, fields1] = await conn.query(
       'update `commentssss` set comment = ? where comment_id = ?',
       [req.body.comment, req.params.id]
     )
@@ -64,8 +64,20 @@ router.put("/comments/:id", async function (req, res) {
 })
 
 //delete comments
-// router.delete("/comments/:id", async function (req, res) {
-
-// })
+router.delete("/comments/:id", async function (req, res) {
+  const conn = await pool.getConnection()
+  // Begin transaction
+  await conn.beginTransaction();
+  try{
+    const [rows1] = await conn.query("delete from `commentssss` where comment_id = ?", [req.params.id])
+    return res.json({"message" : "complete"})
+  }catch (err) {
+    await conn.rollback();
+    return res.status(500).json(err)
+  } finally {
+    console.log('finally')
+    conn.release();
+  }
+})
 
 exports.router = router;

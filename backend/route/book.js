@@ -135,7 +135,20 @@ router.put("/books/:id", upload.single('book_image'), async function (req, res) 
 
 //delete book
 router.delete("/books/:id", async function (req, res) {
-
+  const conn = await pool.getConnection()
+  // Begin transaction
+  await conn.beginTransaction();
+  try{
+    const[rows1] = await conn.query("delete from `books` where book_id = ?", [req.params.id])
+    res.json({"message": "complete"})
+  } catch (err) {
+    console.log(err)
+    await conn.rollback();
+    res.json(err)
+  } finally {
+    console.log('finally')
+    conn.release();
+  }
 })
 
 
