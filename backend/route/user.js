@@ -3,7 +3,7 @@ const pool = require("../config");
 const bcrypt = require('bcrypt')
 const Joi = require('joi')
 const { generateToken } = require("../utils/token");
-
+const { isLoggedIn } = require('../middlewares')
 router = express.Router();
 
 
@@ -136,4 +136,13 @@ router.post('/user/login', async (req, res, next) => {
         conn.release()
     }
 })
+
+// End of Log In Section
+
+router.get('/user/me', isLoggedIn, async (req, res, next) => {
+    // req.user ถูก save ข้อมูล user จาก database ใน middleware function "isLoggedIn"
+    res.json(req.user)
+})
+
+
 exports.router = router
