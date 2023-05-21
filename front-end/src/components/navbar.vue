@@ -33,7 +33,8 @@ export default {
   data() {
         return {
             user: null,
-            role: null
+            role: null,
+            ban: null
         }
     },
     mounted () {
@@ -42,6 +43,8 @@ export default {
     methods: {
       logout () {
       localStorage.removeItem('token')
+      localStorage.removeItem('role')
+      localStorage.removeItem('ban')
       this.$emit('auth-change')
       window.location = '/'
     },
@@ -55,6 +58,15 @@ export default {
       axios.get('/user/me').then(res => {
         this.user = res.data
         this.role = res.data.role
+        this.ban = res.data.ban
+        if (this.role == 'admin') {
+          localStorage.setItem('role', 'admin')
+        }
+        
+        if (this.ban == 1) {
+          this.logout()
+          alert('You are banned from this website!')
+        }
       })
     },
   }
