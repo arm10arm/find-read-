@@ -6,7 +6,7 @@ import axios from '@/plugins/axios';
 <template>
     <div id="app">
         <navcomp></navcomp>
-        <h1 class="text-5xl text-center text-black underline underline-offset-8 mt-6">Manage Banned Users</h1><br><br>
+        <h1 class="text-5xl text-center text-black underline underline-offset-8 mt-6"><b>Manage Banned Users</b></h1><br><br>
         <div class="flex items-center justify-center">
             <table class="w-3/4 text-center border-collapse">
                 <thead>
