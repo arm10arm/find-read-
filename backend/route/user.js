@@ -9,6 +9,15 @@ router = express.Router();
 
 // Sign Up Section
 
+const checkProfile = async (req, res, next) => {
+    const [[user]] = await pool.query("SELECT * FROM user WHERE user_id = ?", [req.params.id])
+
+    if (user.user_id != req.params.id) {
+        return res.status(403).send("You don't have permissions to do this action.")
+    }
+    next()
+}
+
 
 const passwordCheck = (value, helpers) => {
     if (value.length < 8) {
@@ -145,7 +154,7 @@ router.get('/user/me', isLoggedIn, async (req, res, next) => {
 })
 
 
-router.put('/user/update/:id', async (req, res, next) => {
+router.put('/user/update/:id', isLoggedIn, checkProfile, async (req, res, next) => {
     const conn = await pool.getConnection()
     const username = req.body.username
     const first_name = req.body.first_name
