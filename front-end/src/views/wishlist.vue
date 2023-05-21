@@ -6,7 +6,7 @@ import axios from '@/plugins/axios';
 <template>
     <div id='app'>
         <navcomp></navcomp>
-        <h1 class="text-5xl text-center text-black underline underline-offset-8 my-8">Wishlist</h1><br><br>
+        <h1 class="text-5xl text-center text-black underline underline-offset-8 my-8"><b>Wishlist</b></h1><br><br>
 
         <section class="w-full h-auto flex justify-center">
             <div class="grid grid-cols-5 gap-x-12 gap-y-14">
