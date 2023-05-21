@@ -6,7 +6,7 @@ import axios from "axios";
 <template>
     <div id="app">
         <navcomp></navcomp>
-        <h1 class="text-5xl text-center text-black underline underline-offset-8">Manage books</h1><br><br>
+        <h1 class="text-5xl text-center text-black underline underline-offset-8 my-8"><b>Manage books</b></h1><br><br>
         <div class="w-full flex justify-center" style="height: 70px;"><router-link to="/add"><button class = "bg-gray-900 text-white rounded-lg" style="width: 75px; height: 50px;">Add</button></router-link></div>
         <table class = "w-full text-center border-collapse">
             <thead>
