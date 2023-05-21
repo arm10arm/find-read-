@@ -31,18 +31,21 @@ const router = createRouter({
     {
       path: '/add',
       name: 'add',
+      meta: { login: true },
       component: addView
     }
     ,
     {
       path: '/login',
       name: 'login',
+      meta: { guess: true },
       component: login
     }
     ,
     {
       path: '/signup',
       name: 'signup',
+      meta: { guess: true },
       component: signup
     }
     ,
@@ -66,12 +69,14 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'admin',
+      meta: { login: true },
       component: admin
     }
     ,
     {
       path: '/managebooks',
       name: 'managebooks',
+      meta: { login: true },
       component: managebooks
     }
     ,
@@ -84,16 +89,19 @@ const router = createRouter({
     {
       path: '/banuser',
       name: 'banuser',
+      meta: { login: true },
       component: banuser
     },
     {
       path: '/editbook/:id',
       name: 'editbook',
+      meta: { login: true },
       component: editbook
     },
     {
       path: '/profile',
       name: 'profile',
+      meta: { login: true },
       component: profile
     }
   ]

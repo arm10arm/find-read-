@@ -35,6 +35,8 @@ router.post("/books", isLoggedIn,upload.single('book_image'), async function (re
     return res.status(400).json(err.toString())
   }
 
+
+  console.log("hello")
   const file = req.file;
   if (!file) {
     const error = new Error("Please upload a file");
@@ -51,7 +53,7 @@ router.post("/books", isLoggedIn,upload.single('book_image'), async function (re
   await conn.beginTransaction();
 
   try {
-    let results = await pool.query(
+    let results = await conn.query(
       "INSERT INTO  books(book_name, author, book_type, publisher, book_img, contents,add_by_id) VALUES(?, ?, ?, ?, ?, ?,1);",
       [book_name, author, book_type, publisher, file.path.substr(6), content]
     )
@@ -120,9 +122,15 @@ router.get("/book/:id", async function (req, res) {
 //update book
 router.put("/books/:id", isLoggedIn, async function (req, res) {
 
-  const book_name = req.body.book_name;
-  const book_type = req.body.book_type;
-  const author = req.body.book_author;
+  try {
+    await bookcheckSchema.validateAsync(req.body, { abortEarly: false })
+  } catch (err) {
+    return res.status(400).json(err.toString())
+  }
+
+  const book_name = req.body.name;
+  const book_type = req.body.type;
+  const author = req.body.author;
   const content = req.body.content;
   const publisher = req.body.publisher;
   console.log(req.body)
@@ -146,6 +154,7 @@ router.put("/books/:id", isLoggedIn, async function (req, res) {
 
 //delete book
 router.delete("/books/:id",isLoggedIn, async function (req, res) {
+  console.log("hello")
   const conn = await pool.getConnection()
   // Begin transaction
   await conn.beginTransaction();
@@ -165,7 +174,7 @@ router.delete("/books/:id",isLoggedIn, async function (req, res) {
 
 
 //create book in wishlist
-router.post("/wishlist", isLoggedIn,async function (req, res) {
+router.post("/wishlist",isLoggedIn,async function (req, res) {
   const see = req.body.sent
   const conn = await pool.getConnection()
   // Begin transaction
@@ -231,4 +240,49 @@ router.post("/like/:id", isLoggedIn,async function (req, res) {
     conn.release();
   }
 })
+
+//delete like
+router.delete("/like/:id", isLoggedIn,async function (req, res) {
+
+  const conn = await pool.getConnection()
+  // Begin transaction
+  await conn.beginTransaction();
+  try{
+    const [rows1] = await conn.query("delete from `wishlist` where book_id = ? and wishlist_by_id = ?", [req.params.id,req.user.user_id])
+    await conn.commit()
+    res.json({"mess":"comp"})
+  }catch (err) {
+    console.log(err)
+    await conn.rollback();
+  }
+  finally {
+    console.log('finally')
+    conn.release();
+  }
+
+
+})
+
+//delete wishlist
+router.delete("/wishlist/:id", isLoggedIn,async function (req, res) {
+
+  const conn = await pool.getConnection()
+  // Begin transaction
+  await conn.beginTransaction();
+  try{
+    const [rows1] = await conn.query("delete from `wishlist` where book_id = ? and wishlist_by_id = ?", [req.params.id,req.user.user_id])
+    await conn.commit()
+    res.json({"mess":"comp"})
+  }catch (err) {
+    console.log(err)
+    await conn.rollback();
+  }
+  finally {
+    console.log('finally')
+    conn.release();
+  }
+
+
+})
+
 exports.router = router;

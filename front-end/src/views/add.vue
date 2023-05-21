@@ -1,7 +1,7 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
 import footcomp from '../components/footer.vue'
-import axios from "axios";
+import axios from '@/plugins/axios';
 </script>
 
 <template>
@@ -15,26 +15,74 @@ import axios from "axios";
                     <div class="py-4 px-8">
                         <div class="mb-4">
                             <label class="block text-grey-darker text-sm font-bold mb-2" for="book_name">Book Name</label>
-                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="book_name" type="text" placeholder="Insert book name here.">
+                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="book_name"
+                                type="text" placeholder="Insert book name here." v-model="v$.name.$model">
+                            <template v-if="v$.name.$error">
+                                <p class="text-rose-500 mt-0" v-if="v$.name.$errors[0].$validator == 'required'"><b>bookname
+                                        is
+                                        required !</b></p>
+                                <p class="text-rose-500 mt-0" v-if="v$.name.$errors[0].$validator == 'maxLength'"><b>too
+                                        much
+                                        alpha</b></p>
+                            </template>
                         </div>
                         <div class="mb-4">
                             <label class="block text-grey-darker text-sm font-bold mb-2" for="book_type">Book Type</label>
-                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="book_type" type="text" placeholder="Insert book name here.">
+                            <select name="book_type" class="border-zinc-700 border-2" v-model="v$.type.$model">
+                                <option selected></option>
+                                <option value="howto">พัฒนาตัวเอง</option>
+                                <option value="literature">วรรณกรรม</option>
+                                <option value="business">ธุรกิจ</option>
+                                <option value="garden">การจัดสวน</option>
+                                <option value="novel">นวนิยาย</option>
+                            </select>
+                            <template v-if="v$.type.$error" class="mt-0">
+                                <p class="text-rose-500 mt-0" v-if="v$.type.$errors[0].$validator == 'required'"><b>typebook
+                                        is
+                                        required !</b></p>
+                            </template>
                         </div>
                         <div class="mb-4">
                             <label class="block text-grey-darker text-sm font-bold mb-2" for="author">Book Author</label>
-                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="author" type="text" placeholder="Insert book author here.">
+                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="author"
+                                type="text" placeholder="Insert book author here." v-model="v$.author.$model">
+                                <template v-if="v$.author.$error">
+                        <p class="text-rose-500 mt-0" v-if="v$.author.$errors[0].$validator == 'required'"><b>author is
+                                required !</b></p>
+                        <p class="text-rose-500 mt-0" v-if="v$.author.$errors[0].$validator == 'maxLength'"><b>too much
+                                alpha</b></p>
+                    </template>
                         </div>
                         <div class="mb-4">
                             <label class="block text-grey-darker text-sm font-bold mb-2" for="publisher">Publisher</label>
-                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="publisher" type="text" placeholder="Insert publisher here.">
+                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="publisher"
+                                type="text" placeholder="Insert publisher here." v-model = "v$.publisher.$model">
+                                <template v-if="v$.publisher.$error">
+                        <p class="text-rose-500 mt-0" v-if="v$.publisher.$errors[0].$validator == 'required'"><b>publisher
+                                is
+                                required !</b></p>
+                        <p class="text-rose-500 mt-0" v-if="v$.publisher.$errors[0].$validator == 'maxLength'"><b>too much
+                                alpha</b></p>
+                    </template>
                         </div>
                         <div class="mb-4">
                             <label class="block text-grey-darker text-sm font-bold mb-2" for="content">Content</label>
-                            <textarea class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="content" type="text" placeholder="Insert content here."></textarea>
+                            <textarea class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="content"
+                                type="text" placeholder="Insert content here." v-model = "v$.content.$model"></textarea>
+                                <template v-if="v$.content.$error">
+                        <p class="text-rose-500 mt-0" v-if="v$.content.$errors[0].$validator == 'required'"><b>content is
+                                required !</b></p>
+                        <p class="text-rose-500 mt-0" v-if="v$.content.$errors[0].$validator == 'maxLength'"><b>too much
+                                alpha</b></p>
+                    </template>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-grey-darker text-sm font-bold mb-2" for="content">image</label>
+                            <input type="file" id="file" ref="file" @change="handleFileUpload()">
                         </div>
                         <div class="flex items-center justify-between mt-8">
-                            <button class="bg-black text-white font-bold py-2 px-4 rounded-md" type="submit">Update</button>
+                            <button class="bg-black text-white font-bold py-2 px-4 rounded-md" type="submit"
+                                @click="submit()">create</button>
                         </div>
                     </div>
                 </div>
@@ -72,19 +120,21 @@ export default {
             if (this.v$.$error) {
                 alert("Please fill all the fields correctly !")
             }
-            var formData = new FormData();
-            formData.append("name", this.name);
-            formData.append("type", this.type)
-            formData.append("author", this.author)
-            formData.append("content", this.content)
-            formData.append("publisher", this.publisher)
-            formData.append("book_image", this.file)
-            axios.post('http://localhost:3000/books', formData, {
+            let data = {
+                name: this.name,
+                type: this.type,
+                author: this.author,
+                content: this.content,
+                publisher: this.publisher,
+                book_image: this.file
+            }
+            axios.post('http://localhost:3000/books', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
                 console.log(response);
+                alert("aaa")
                 // this.$router.push({ path: '/categories' }) // Success! -> redirect to home page
             })
                 .catch(error => {

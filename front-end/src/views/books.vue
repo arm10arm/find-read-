@@ -18,12 +18,12 @@ import axios from '@/plugins/axios';
                         style="font-family: 'Gloock', serif;" @click="addlike()">Like ({{
                             like.length }})</button>
                     <button class="bg-red-600 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
-                        style="font-family: 'Gloock', serif;" v-else>UnLike ({{
+                        style="font-family: 'Gloock', serif;" v-else @click="deletelike()">UnLike ({{
                             like.length }})</button>
                     <button v-if="checkwish(item, userofid) || user === null"  class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
                         style="font-family: 'Gloock', serif;" @click="createwish(item)">Add to
                         wishlist</button>
-                    <button v-else class="w-full bg-red-500 text-zinc-300	h-10 rounded-lg mt-5">นำออกจาก
+                    <button v-else class="w-full bg-red-500 text-zinc-300	h-10 rounded-lg mt-5" @click = "deletewish(item.book_id)" >นำออกจาก
                         Wishlist</button>
                 </div>
                 <div class="right ml-4" style="width: 600px;">
@@ -70,7 +70,7 @@ import axios from '@/plugins/axios';
                             </div>
                             <div v-else-if="user.user_id === comments.comment_by_id || user.role === 'admin'"
                                 class="flex justify-end mr-4">
-                                <button class="bg-red-400" style="height: 40px; width: 75px;">Delete</button>
+                                <button class="bg-red-400" style="height: 40px; width: 75px;" @click="deletecomm(comments.comment_id)">Delete</button>
                                 <button v-if="wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
                                     @click="wantedit = -1">cancel</button>
                                 <button v-if="wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
@@ -158,11 +158,32 @@ export default {
                     this.error = error.response.data.message;
                 });
         },
+        deletecomm(want){
+            console.log(want)
+            axios
+                .delete(`http://localhost:3000/comments/${want}`)
+                .then((response) => {
+                    console.log(response)
+                })
+                .catch((error) => {
+                    this.error = error.response.data.message;
+                });
+        },
         addlike(){
             axios
             .post(`http://localhost:3000/like/${this.$route.params.id}`)
             .then((response) => {
                     console.log(response.data);
+                })
+                .catch((error) => {
+                    this.error = error.response.data.message;
+                });
+        },
+        deletelike(){
+            axios
+                .delete(`http://localhost:3000/comments/${this.$route.params.id}`)
+                .then((response) => {
+                    console.log(response)
                 })
                 .catch((error) => {
                     this.error = error.response.data.message;
@@ -222,6 +243,16 @@ export default {
                 this.user = res.data
                 this.userofid = res.data.user_id
             })
+        },
+        deletewish(want2){
+            axios
+                .delete(`http://localhost:3000/wishlist/${want2}`)
+                .then((response) => {
+                    console.log(response)
+                })
+                .catch((error) => {
+                    this.error = error.response.data.message;
+                });
         }
     }
 }
