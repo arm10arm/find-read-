@@ -20,6 +20,7 @@
         <!--second-items----->
           <router-link to="/signup"><button v-if="!user" class="w-24 h-10 rounded-lg bg-zinc-700 my-2 mx-2"><span  class=" text-slate-200">Sign up</span></button></router-link>
           <router-link to="/login"><button v-if="!user" class="w-24 h-10 rounded-lg bg-zinc-700 my-2 mx-2"><span  class=" text-slate-200">Log in</span></button></router-link>
+          <router-link to="/profile"><button v-if="user" class="w-24 h-10 rounded-lg bg-zinc-700 my-2 mx-2"><span  class=" text-slate-200">My Profile</span></button></router-link>
           <button v-if="user" class="w-24 h-10 rounded-lg bg-zinc-700 my-2 mx-2"><span class=" text-slate-200" @click="logout()">Log out</span></button>
 
         <!------------------->
