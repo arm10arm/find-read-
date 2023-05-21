@@ -5,10 +5,10 @@ import axios from '@/plugins/axios';
 <template>
   <div id="app">
     <navcomp></navcomp>
-    <h1 class="text-5xl text-center text-black underline underline-offset-8">Categories</h1><br><br>
+    <h1 class="text-5xl text-center text-black underline underline-offset-8 my-8">Categories</h1><br><br>
     <div class="fixse flex w-full justify-end">
-      <label for="cate">หมวดหนังสือ: </label>
-      <select class="border-black" name="book_type" v-model="book_type">
+      <label for="cate" class="text-xl">หมวดหนังสือ: </label>
+      <select class="border-2 border-black rounded-sm mx-4" name="book_type" v-model="book_type">
         <option selected></option>
         <option>Howto</option>
         <option>Literature</option>
