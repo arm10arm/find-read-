@@ -5,74 +5,42 @@ import axios from 'axios';
 </script>
 
 <template>
-    <div id = "app">
+    <div id='app'>
         <navcomp></navcomp>
-        <h1 class="text-5xl text-center text-black underline underline-offset-8">Edit book</h1><br><br>
-        <div class="flex justify-center items-center" style="width: 100%; height: 500px;">
-            <form>
-                <div>
-                    <label>ชื่อหนังสือ:</label>
-                    <input type="text" name="book_name" class="border-zinc-700 border-2" v-model="v$.name.$model">
-                    <template v-if="v$.name.$error">
-                        <p class="text-rose-500 mt-0" v-if="v$.name.$errors[0].$validator == 'required'"><b>bookname is
-                                required !</b></p>
-                        <p class="text-rose-500 mt-0" v-if="v$.name.$errors[0].$validator == 'maxLength'"><b>too much
-                                alpha</b></p>
-                    </template>
+        <h1 class="text-5xl text-center text-black underline underline-offset-8 py-8">Editbook</h1>
+        <div class="w-full bg-grey-lightest" style="padding-top: 4rem;">
+            <div class="container mx-auto py-8">
+                <div class="w-5/6 lg:w-1/2 mx-auto bg-white rounded shadow">
+                    <div class="py-4 px-8 text-black text-xl border-b border-grey-lighter"><b>Book Info</b></div>
+                    <div class="py-4 px-8">
+                        <div class="mb-4">
+                            <label class="block text-grey-darker text-sm font-bold mb-2" for="book_name">Book Name</label>
+                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="book_name" type="text" placeholder="Insert book name here.">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-grey-darker text-sm font-bold mb-2" for="book_type">Book Type</label>
+                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="book_type" type="text" placeholder="Insert book name here.">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-grey-darker text-sm font-bold mb-2" for="author">Book Author</label>
+                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="author" type="text" placeholder="Insert book author here.">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-grey-darker text-sm font-bold mb-2" for="publisher">Publisher</label>
+                            <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="publisher" type="text" placeholder="Insert publisher here.">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-grey-darker text-sm font-bold mb-2" for="content">Content</label>
+                            <textarea class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="content" type="text" placeholder="Insert content here."></textarea>
+                        </div>
+                        <div class="flex items-center justify-between mt-8">
+                            <button class="bg-black text-white font-bold py-2 px-4 rounded-md" type="submit">Update</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-5">
-                    <label>ชนิดหนังสือ:</label>
-                    <select name="book_type" class="border-zinc-700 border-2" v-model="v$.type.$model">
-                        <option selected></option>
-                        <option value="howto">พัฒนาตัวเอง</option>
-                        <option value="literature">วรรณกรรม</option>
-                        <option value="business">ธุรกิจ</option>
-                        <option value="garden">การจัดสวน</option>
-                        <option value="novel">นวนิยาย</option>
-                    </select>
-                    <template v-if="v$.type.$error" class="mt-0">
-                        <p class="text-rose-500 mt-0" v-if="v$.type.$errors[0].$validator == 'required'"><b>typebook is
-                                required !</b></p>
-                    </template>
-                </div>
-                <div class="mt-5">
-                    <label>สํานักพิมพ์:</label>
-                    <input type="text" name="publisher" class="border-zinc-700 border-2" v-model="v$.publisher.$model">
-                    <template v-if="v$.publisher.$error">
-                        <p class="text-rose-500 mt-0" v-if="v$.publisher.$errors[0].$validator == 'required'"><b>publisher
-                                is
-                                required !</b></p>
-                        <p class="text-rose-500 mt-0" v-if="v$.publisher.$errors[0].$validator == 'maxLength'"><b>too much
-                                alpha</b></p>
-                    </template>
-                </div>
-                <div class="mt-5">
-                    <label>ผู้เขียน:</label>
-                    <input type="text" name="book_author" class="border-zinc-700 border-2" v-model="v$.author.$model">
-                    <template v-if="v$.author.$error">
-                        <p class="text-rose-500 mt-0" v-if="v$.author.$errors[0].$validator == 'required'"><b>author is
-                                required !</b></p>
-                        <p class="text-rose-500 mt-0" v-if="v$.author.$errors[0].$validator == 'maxLength'"><b>too much
-                                alpha</b></p>
-                    </template>
-                </div>
-                <div class="mt-5">
-                    <label>เนื้อหา:</label>
-                    <textarea cols="30" rows="10" name="content" class="border-zinc-700 border-2"
-                        v-model="v$.content.$model"></textarea>
-                    <template v-if="v$.content.$error">
-                        <p class="text-rose-500 mt-0" v-if="v$.content.$errors[0].$validator == 'required'"><b>content is
-                                required !</b></p>
-                        <p class="text-rose-500 mt-0" v-if="v$.content.$errors[0].$validator == 'maxLength'"><b>too much
-                                alpha</b></p>
-                    </template>
-                </div>
-                <div class="mt-5">
-                    <button type="submit" @click="submit()">submit</button>
-                </div>
-            </form>
-        </div><br>
-    <footcomp></footcomp>
+            </div>
+        </div>
+        <footcomp></footcomp>
     </div>
 </template>
 <script>
