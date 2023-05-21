@@ -38,6 +38,7 @@
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 export default {
     data () {
@@ -56,10 +57,9 @@ export default {
     
     axios.post('http://localhost:3000/user/login/', data)
     .then(res => {
-        alert('Login successful')
+        alert('Login Success')
         const token = res.data.token                                
         localStorage.setItem('token', token)
-        localStorage.setItem('role', res.data.role)
         this.$emit('auth-change')
         this.$router.push({path: 'home'})
     })
