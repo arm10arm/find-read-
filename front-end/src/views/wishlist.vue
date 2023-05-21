@@ -1,6 +1,6 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
-import axios from "axios";
+import axios from '@/plugins/axios';
 </script>
 
 <template>

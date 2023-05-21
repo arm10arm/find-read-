@@ -2,12 +2,23 @@ const express = require("express")
 const path = require("path")
 const pool = require("../config")
 const { isLoggedIn } = require('../middlewares')
-
+const Joi = require('joi')
 router = express.Router()
+
+const commentSchema = Joi.object({
+  comment: Joi.string().required().max(255)
+})
 
 //add comments
 router.post("/:id/comments",isLoggedIn,async function (req, res) {
   console.log(req.params.id);
+
+  try {
+    await commentSchema.validateAsync(req.body, { abortEarly: false })
+  } catch (err) {
+    return res.status(400).json(err.toString())
+  }
+
   const comment = req.body.comment
   const conn = await pool.getConnection()
   // Begin transaction
@@ -29,11 +40,10 @@ router.post("/:id/comments",isLoggedIn,async function (req, res) {
 })
 
 router.get("/comments/:id",async function (req, res) {
-  const promise1 = pool.query("SELECT * FROM `commentssss` WHERE book_id=?", [req.params.id]);
+  const promise1 = pool.query("SELECT * FROM `commentssss` c join `user` u on (c.comment_by_id = u.user_id) WHERE book_id=?", [req.params.id]);
   Promise.all([promise1])
     .then((results) => {
       const [row, field] = results[0];
-      console.log(row)
       res.json({
         comment: row
       });
@@ -45,6 +55,13 @@ router.get("/comments/:id",async function (req, res) {
 
 //update comments
 router.put("/comments/:id", isLoggedIn,async function (req, res) {
+
+  try {
+    await commentSchema.validateAsync(req.body, { abortEarly: false })
+  } catch (err) {
+    return res.status(400).json(err.toString())
+  }
+
   const conn = await pool.getConnection()
   // Begin transaction
   await conn.beginTransaction();
@@ -71,6 +88,7 @@ router.delete("/comments/:id", isLoggedIn,async function (req, res) {
   await conn.beginTransaction();
   try{
     const [rows1] = await conn.query("delete from `commentssss` where comment_id = ?", [req.params.id])
+    await conn.commit()
     return res.json({"message" : "complete"})
   }catch (err) {
     await conn.rollback();

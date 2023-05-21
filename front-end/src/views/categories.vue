@@ -1,6 +1,6 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
-import axios from 'axios';
+import axios from '@/plugins/axios';
 </script>
 <template>
   <div id="app">
@@ -32,9 +32,6 @@ import axios from 'axios';
           </div><br><br>
           <router-link :to="{ name: 'books', params: { id: items.book_id } }"><button
               class="w-full bg-zinc-900 text-zinc-300	h-10 rounded-lg">อ่านเพิ่มเติม</button></router-link>
-          <button class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
-            style="font-family: 'Gloock', serif;" @click = "createwish(items)">Add to
-            wishlist</button>
         </div>
       </div>
     </section>

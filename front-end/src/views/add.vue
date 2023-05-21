@@ -8,31 +8,7 @@ import axios from "axios";
     <div id='app'>
         <navcomp></navcomp>
         <h1 class="text-5xl text-center text-black underline underline-offset-8">Addbook</h1><br><br>
-        <div class="flex justify-center items-center" style="width: 100%; height: 700px; background-color: bisque;">
-            <form>
-                <label>ชื่อหนังสือ:</label>
-                <input type="text" name="book_name" class="border-zinc-700 border-2" v-model="name"><br><br>
-                <label>ชนิดหนังสือ:</label>
-                <select name="book_type" class="border-zinc-700 border-2" v-model="type">
-                    <option selected></option>
-                    <option value="howto">พัฒนาตัวเอง</option>
-                    <option value="literature">วรรณกรรม</option>
-                    <option value="business">ธุรกิจ</option>
-                    <option value="garden">การจัดสวน</option>
-                    <option value="novel">นวนิยาย</option>
-                </select><br><br>
-                <label>สํานักพิมพ์:</label>
-                <input type="text" name="publisher" class="border-zinc-700 border-2" v-model="publisher"><br><br>
-                <label>ผู้เขียน:</label>
-                <input type="text" name="book_author" class="border-zinc-700 border-2" v-model="author"><br><br>
-                <label>เนื้อหา:</label>
-                <textarea cols="30" rows="10" name="content" class="border-zinc-700 border-2"
-                    v-model="content"></textarea><br><br>
-                <label>รูป:</label>
-                <input type="file" id="file" ref="file" @change="handleFileUpload()">
-                <button type="submit" @click="submit()">submit</button>
-            </form>
-        </div>
+       
         <footcomp></footcomp>
     </div>
 </template>
@@ -40,9 +16,13 @@ import axios from "axios";
 
 
 <script>
+import useValidate from '@vuelidate/core'
+import { required, maxLength, minLength } from '@vuelidate/validators'
+
 export default {
     data() {
         return {
+            v$: useValidate(),
             name: '',
             type: '',
             author: '',
@@ -57,10 +37,14 @@ export default {
             this.file = this.$refs.file.files[0];
         },
         submit() {
+            this.v$.$validate()
+            if (this.v$.$error) {
+                alert("Please fill all the fields correctly !")
+            }
             var formData = new FormData();
-            formData.append("book_name", this.name);
-            formData.append("book_type", this.type)
-            formData.append("book_author", this.author)
+            formData.append("name", this.name);
+            formData.append("type", this.type)
+            formData.append("author", this.author)
             formData.append("content", this.content)
             formData.append("publisher", this.publisher)
             formData.append("book_image", this.file)
@@ -70,12 +54,21 @@ export default {
                 }
             }).then(response => {
                 console.log(response);
-                this.$router.push({ path: '/categories' }) // Success! -> redirect to home page
+                // this.$router.push({ path: '/categories' }) // Success! -> redirect to home page
             })
                 .catch(error => {
                     console.log(error.message);
                 });
         }
-    }
+    },
+    validations() {
+        return {
+            name: { required, maxLength: maxLength(150) },
+            type: { required, minLength: minLength(1) },
+            author: { required, maxLength: maxLength(80) },
+            content: { required, maxLength: maxLength(255) },
+            publisher: { required, maxLength: maxLength(80) }
+        }
+    },
 }
 </script>

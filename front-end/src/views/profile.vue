@@ -103,7 +103,7 @@ export default {
                 localStorage.setItem('role', JSON.stringify(res.data.role))
                 this.username = res.data.username
                 this.first_name = res.data.first_name
-                this.last_name = res.data.last_name 
+                this.last_name = res.data.last_name
                 this.email = res.data.email
                 this.user_id = res.data.id
             })

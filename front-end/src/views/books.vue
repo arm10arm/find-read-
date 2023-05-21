@@ -14,12 +14,17 @@ import axios from '@/plugins/axios';
                     <div class="img-container w-full h-80 flex justify-center">
                         <img :src="getimg(item.book_img)">
                     </div>
-                    <button class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
-                        style="font-family: 'Gloock', serif;"  @click="addlike()">Like ({{
+                    <button v-if = "checklike(item, userofid) || user === null" class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
+                        style="font-family: 'Gloock', serif;" @click="addlike()">Like ({{
                             like.length }})</button>
-                    <!-- <button class="bg-red-600 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
+                    <button class="bg-red-600 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
                         style="font-family: 'Gloock', serif;" v-else>UnLike ({{
-                            like.length }})</button> -->
+                            like.length }})</button>
+                    <button v-if="checkwish(item, userofid) || user === null"  class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
+                        style="font-family: 'Gloock', serif;" @click="createwish(item)">Add to
+                        wishlist</button>
+                    <button v-else class="w-full bg-red-500 text-zinc-300	h-10 rounded-lg mt-5">นำออกจาก
+                        Wishlist</button>
                 </div>
                 <div class="right ml-4" style="width: 600px;">
                     <div class="content-top w-full">
@@ -36,7 +41,7 @@ import axios from '@/plugins/axios';
                     </div>
                 </div>
             </div>
-        </section><br>
+        </section><br><br><br>
 
         <section class="w-full h-96 flex justify-center items-center mt-4">
             <div class="container h-full" style="width: 900px;">
@@ -48,23 +53,27 @@ import axios from '@/plugins/axios';
                 <div class="box-comment w-full pt-4" style="height: 500px; overflow: scroll;">
                     <div class="flex" v-for="(comments, index) in comments" style="width: 800px; height: 170px;">
                         <div class="h-full" style="width: 150px;">
-                            <p class="break-all">img</p>
+                            <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                                style="width = 100%; height:100%;">
                         </div>
                         <div class="ml-2 w-full">
                             <div style="height: 25px;">
-                                <p>username</p>
+                                <p>{{ comments.username }}</p>
                             </div>
                             <div v-if="wantedit === index" class="w-full mt-3" style="height: 100px; overflow: scroll;">
-                                <textarea class ="bg-slate-300" v-model="commentedit" style="width: 100%;"></textarea>
+                                <textarea class="bg-slate-300" v-model="commentedit" style="width: 100%;"></textarea>
                             </div>
                             <div v-else class="w-full mt-3" style="height: 100px; overflow: scroll;">
                                 <p>{{ comments.comment }}</p>
                             </div>
-                            <div  v-if ="user.user_id === comments.comment_by_id || user.role === 'admin'" class="flex justify-end mr-4">
+                            <div v-if="user === null" class="flex justify-end mr-4">
+                            </div>
+                            <div v-else-if="user.user_id === comments.comment_by_id || user.role === 'admin'"
+                                class="flex justify-end mr-4">
                                 <button class="bg-red-400" style="height: 40px; width: 75px;">Delete</button>
                                 <button v-if="wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
                                     @click="wantedit = -1">cancel</button>
-                                <button v-if = "wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
+                                <button v-if="wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
                                     @click="wantedit = -1; updatecomm()">Confirm</button>
                                 <button v-else class="bg-yellow-400" style="height: 40px; width: 75px;"
                                     @click="wantedit = index; commentedit = comments.comment">Edit</button>
@@ -80,7 +89,6 @@ import axios from '@/plugins/axios';
 
 <script>
 export default {
-    props: ['user'],
 
     data() {
         return {
@@ -90,7 +98,12 @@ export default {
             comment: '',
             wantedit: -1,
             commentedit: '',
-            like_of_id:{}
+            like_of_id: {},
+            wishlist: [],
+            checkwishh: {},
+            checklikee:{},
+            user:null,
+            userofid : 0
         }
     },
     created() {
@@ -111,8 +124,11 @@ export default {
                 console.log(err);
             });
         console.log(this.user)
-    }
-    ,
+    },
+    mounted() {
+        this.getwish();
+        this.onAuthChange();
+    },
     methods: {
         getimg(img) {
             return "http://localhost:3000/" + img;
@@ -130,29 +146,83 @@ export default {
                 });
             this.comment = "";
         },
-        updatecomm(){
+        updatecomm() {
             axios
-            .put(`http://localhost:3000/${this.$route.params.id}/comments`,{
-                comment: this.commentedit
-            })
-            .then((response) => {
+                .put(`http://localhost:3000/${this.$route.params.id}/comments`, {
+                    comment: this.commentedit
+                })
+                .then((response) => {
                     this.commentedit.push(response.data);
                 })
                 .catch((error) => {
                     this.error = error.response.data.message;
                 });
         },
-        // addlike(){
-        //     axios
-        //     .post(`http://localhost:3000/like/${this.$route.params.id}`)
-        //     .then((response) => {
-        //             console.log(response.data);
-        //         })
-        //         .catch((error) => {
-        //             this.error = error.response.data.message;
-        //         });
-        // },
-
+        addlike(){
+            axios
+            .post(`http://localhost:3000/like/${this.$route.params.id}`)
+            .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    this.error = error.response.data.message;
+                });
+        },
+        createwish(seen) {
+            console.log(seen)
+            axios.post("http://localhost:3000/wishlist", { sent: seen })
+                .then((response) => {
+                    console.log(response)
+                    this.$router.push({ path: '/wishlist' })
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+        getwish() {
+            axios
+                .get("http://localhost:3000/wishlist", {
+                })
+                .then((response) => {
+                    this.wishlist = response.data.wish;
+                    console.log(this.wishlist)
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        },
+        checkwish(send, user) {
+            console.log(user)
+            this.checkwishh = this.wishlist.filter(x => x.book_id === send.book_id && x.wishlist_by_id === user)
+            if (!(this.checkwishh.length > 0)) {
+                console.log(this.checkwishh.length)
+                return true
+            }
+            else {
+                return false
+            }
+        },
+        checklike(send2,user2) {
+            this.checklikee = this.like.filter(x => x.book_id === send2.book_id && x.like_by_id === user2)
+            if (!(this.checklikee.length > 0)) {
+                return true
+            }
+            else {
+                return false
+            }
+        },
+        onAuthChange () {
+            const token = localStorage.getItem('token')
+            if (token) {
+                this.getUser()
+            }
+        },
+        getUser () {
+            axios.get('/user/me').then(res => {
+                this.user = res.data
+                this.userofid = res.data.user_id
+            })
+        }
     }
 }
 </script>
