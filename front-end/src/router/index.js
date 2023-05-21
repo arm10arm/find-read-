@@ -38,64 +38,68 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      meta: { guess: true },
+      meta: { guest: true },
       component: login
     }
     ,
     {
       path: '/signup',
       name: 'signup',
-      meta: { guess: true },
+      meta: { guest: true },
       component: signup
     }
     ,
     {
       path: '/wishlist',
       name: 'wishlist',
+      meta: { login: true },
       component: wishlist
     }
     ,
     {
       path: '/catagories',
       name: 'catagories',
+      meta: { login: true },
       component: catagories
     }
     ,
     {
       path: '/books/:id',
       name: 'books',
+      meta: { login: true, role: true },
       component: books
     },
     {
       path: '/admin',
       name: 'admin',
-      meta: { login: true },
+      meta: { login: true, role: true },
       component: admin
     }
     ,
     {
       path: '/managebooks',
       name: 'managebooks',
-      meta: { login: true },
+      meta: { login: true, role: true },
       component: managebooks
     }
     ,
     {
       path: '/user',
       name: 'user',
+      meta: { login: true, role: true },
       component: user
     }
     ,
     {
       path: '/banuser',
       name: 'banuser',
-      meta: { login: true },
+      meta: { login: true, role: true },
       component: banuser
     },
     {
       path: '/editbook/:id',
       name: 'editbook',
-      meta: { login: true },
+      meta: { login: true, role: true },
       component: editbook
     },
     {
@@ -103,8 +107,27 @@ const router = createRouter({
       name: 'profile',
       meta: { login: true },
       component: profile
-    }
+    },
   ]
 })
 
 export default router
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = !!localStorage.getItem('token')
+  const isAdmin = localStorage.getItem('role')
+
+  if (to.meta.login && !isLoggedIn) {
+    next({ path: '/login' })
+  }
+  
+  if (to.meta.guest && isLoggedIn) {
+    next({ path: '/home'})
+  }
+
+  if (to.meta.role && isAdmin != 'admin') {
+    next({ path: '/home'})
+  }
+  
+  next()
+})
