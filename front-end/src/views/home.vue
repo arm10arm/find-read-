@@ -32,6 +32,6 @@
         </div>
     </div>
 </template>
-<script>
+<script setup>
 import navcomp from '../components/navbar.vue'
 </script>

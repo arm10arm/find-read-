@@ -32,6 +32,7 @@ import axios from "axios";
 
 <script>
 export default {
+  props: ['user'],
   data() {
     return {
       items: []

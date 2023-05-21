@@ -1,6 +1,6 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
-import axios from "axios";
+import axios from '@/plugins/axios';
 </script>
 
 <template>
@@ -8,7 +8,6 @@ import axios from "axios";
     <div id="app">
 
         <h1 class="text-5xl text-center text-black underline underline-offset-8">Book</h1><br><br>
-
         <section class="w-full h-96 flex justify-center items-center">
             <div class="container h-full flex" style="width: 900px;">
                 <div class="left w-64">
@@ -16,11 +15,11 @@ import axios from "axios";
                         <img :src="getimg(item.book_img)">
                     </div>
                     <button class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
-                        style="font-family: 'Gloock', serif;" v-if="like[0].like === 0" @click="addlike()">Like ({{
+                        style="font-family: 'Gloock', serif;"  @click="addlike()">Like ({{
                             like.length }})</button>
-                    <button class="bg-red-600 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
+                    <!-- <button class="bg-red-600 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
                         style="font-family: 'Gloock', serif;" v-else>UnLike ({{
-                            like.length }})</button>
+                            like.length }})</button> -->
                 </div>
                 <div class="right ml-4" style="width: 600px;">
                     <div class="content-top w-full">
@@ -61,7 +60,7 @@ import axios from "axios";
                             <div v-else class="w-full mt-3" style="height: 100px; overflow: scroll;">
                                 <p>{{ comments.comment }}</p>
                             </div>
-                            <div class="flex justify-end mr-4">
+                            <div  v-if ="user.user_id === comments.comment_by_id || user.role === 'admin'" class="flex justify-end mr-4">
                                 <button class="bg-red-400" style="height: 40px; width: 75px;">Delete</button>
                                 <button v-if="wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
                                     @click="wantedit = -1">cancel</button>
@@ -81,6 +80,8 @@ import axios from "axios";
 
 <script>
 export default {
+    props: ['user'],
+
     data() {
         return {
             item: {},
@@ -109,6 +110,7 @@ export default {
             .catch((err) => {
                 console.log(err);
             });
+        console.log(this.user)
     }
     ,
     methods: {
@@ -150,7 +152,7 @@ export default {
         //             this.error = error.response.data.message;
         //         });
         // },
-        
+
     }
 }
 </script>

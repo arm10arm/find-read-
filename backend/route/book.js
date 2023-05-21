@@ -1,6 +1,7 @@
 const express = require("express")
 const path = require("path")
 const pool = require("../config")
+const { isLoggedIn } = require('../middlewares')
 
 router = express.Router()
 
@@ -18,7 +19,7 @@ var storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 //add books
-router.post("/books", upload.single('book_image'), async function (req, res) {
+router.post("/books", isLoggedIn,upload.single('book_image'), async function (req, res) {
   const file = req.file;
   if (!file) {
     const error = new Error("Please upload a file");
@@ -102,7 +103,7 @@ router.get("/book/:id", async function (req, res) {
 })
 
 //update book
-router.put("/books/:id", upload.single('book_image'), async function (req, res) {
+router.put("/books/:id", isLoggedIn,upload.single('book_image'), async function (req, res) {
   const file = req.file;
   const book_name = req.body.book_name;
   const book_type = req.body.book_type;
@@ -134,7 +135,7 @@ router.put("/books/:id", upload.single('book_image'), async function (req, res) 
 })
 
 //delete book
-router.delete("/books/:id", async function (req, res) {
+router.delete("/books/:id",isLoggedIn, async function (req, res) {
   const conn = await pool.getConnection()
   // Begin transaction
   await conn.beginTransaction();
@@ -153,7 +154,7 @@ router.delete("/books/:id", async function (req, res) {
 
 
 //create book in wishlist
-router.post("/wishlist", async function (req, res) {
+router.post("/wishlist", isLoggedIn,async function (req, res) {
   const see = req.body.sent
   const conn = await pool.getConnection()
   // Begin transaction
@@ -187,7 +188,7 @@ router.get("/wishlist", async function (req, res) {
 })
 
 //create like
-router.post("/like/:id", async function (req, res) {
+router.post("/like/:id", isLoggedIn,async function (req, res) {
   const conn = await pool.getConnection()
   // Begin transaction
   await conn.beginTransaction();
