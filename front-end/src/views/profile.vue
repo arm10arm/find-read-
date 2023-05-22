@@ -3,9 +3,9 @@
         <navcomp></navcomp>
         <div v-if="user" class="flex flex-row">
             <div class="w-1/4 bg-slate-700 h-screen">
-                <div class="md:w-3/12 md:ml-16">
+                <div class="flex justify-center items-center" style="width:100%; height: 200px;">
                     <!-- profile image -->
-                    <img class="rounded-md w-auto h-auto mx-20 mt-8 " src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile image">
+                    <img class="rounded-md w-auto h-auto mx-20 mt-8 " :src=" file ? `http://localhost:3000/uploads/${file}`: src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'" style="width:200px; height: 150px;">
                 </div>
                 <div>
                     <!-- profile name -->
@@ -54,6 +54,10 @@
                                     <p class="text-rose-500" v-if="v$.email.$errors[0].$validator == 'email'"><b>Invalid email !</b></p>
                                 </template>
                             </div>
+                            <div class="mb-4">
+                                <label class="block text-grey-darker text-sm font-bold mb-2" for="user_pic">User Profile Picture</label>
+                                <input class="appearance-none border rounded w-full py-2 px-3 text-grey-darker" type="file" ref="file" accept="image/png, image/jpeg, image/webp" @change="handleFileUpload()">
+                            </div>
                             <div class="flex items-center justify-between mt-8">
                                 <button class="bg-black text-white font-bold py-2 px-4 rounded-md" type="submit" @click="updateUser(user.user_id)">
                                     Update
@@ -84,7 +88,8 @@ export default {
             first_name: '',
             last_name: '',
             email: '',
-            user_id: ''
+            user_id: '',
+            file: null
         }
     },
     mounted () {
@@ -106,26 +111,48 @@ export default {
                 this.last_name = res.data.last_name
                 this.email = res.data.email
                 this.user_id = res.data.id
+                this.file = res.data.user_pic
             })
         },
+        handleFileUpload() {
+            this.file = this.$refs.file.files[0];
+            console.log(this.file);
+        },
         updateUser(user_id){
+            let updateData = {}
             this.v$.$validate()
             if (this.v$.$error) {
                 alert("Please fill all the fields correctly !")
             }
             else{
-                let updateData = {
+                if (this.file){
+                    console.log(this.file);
+                    updateData = {
                     username: this.username,
                     email: this.email,
                     first_name: this.first_name,
                     last_name: this.last_name,
+                    user_pic: this.file
+                    }
                 }
-
-                axios.put(`/user/update/${user_id}`, updateData).then(res => {
+                else{
+                    updateData = {
+                    username: this.username,
+                    email: this.email,
+                    first_name: this.first_name,
+                    last_name: this.last_name
+                    }
+                }
+                axios.put(`/user/update/${user_id}`, updateData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                .then(res => {
                     alert("Profile updated successfully !")
                     this.user = res.data.user;
                     window.location.reload();
-                    console.log(res.data.user);
+                    console.log(updateData);
                 })
             }
         }
