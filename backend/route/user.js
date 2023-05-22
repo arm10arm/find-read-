@@ -2,6 +2,20 @@ const express = require("express");
 const pool = require("../config");
 const bcrypt = require('bcrypt')
 const Joi = require('joi')
+const multer = require('multer');
+// SET STORAGE
+var storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, "./static/uploads");
+    },
+    filename: function (req, file, callback) {
+        callback(
+            null,
+            file.originalname
+        );
+    },
+});
+const upload = multer({ storage: storage })
 const { generateToken } = require("../utils/token");
 const { isLoggedIn } = require('../middlewares')
 router = express.Router();
@@ -154,12 +168,13 @@ router.get('/user/me', isLoggedIn, async (req, res, next) => {
 })
 
 
-router.put('/user/update/:id', isLoggedIn, checkProfile, async (req, res, next) => {
+router.put('/user/update/:id', isLoggedIn, checkProfile, upload.single('user_pic'), async (req, res, next) => {
     const conn = await pool.getConnection()
     const username = req.body.username
     const first_name = req.body.first_name
     const last_name = req.body.last_name
     const email = req.body.email
+    const user_pic = req.file.filename
 
     const updateSchema = Joi.object({
         username: Joi.string().required(),
@@ -168,6 +183,8 @@ router.put('/user/update/:id', isLoggedIn, checkProfile, async (req, res, next) 
         email: Joi.string().required().email(),
     })
     
+    console.log(req.body)
+
     // Begin transaction
     await conn.beginTransaction();
     try {
@@ -175,19 +192,37 @@ router.put('/user/update/:id', isLoggedIn, checkProfile, async (req, res, next) 
     } catch (err) {
         return res.status(400).send(err)
     }
-    try {
-        const [row] = await pool.query("UPDATE user SET username = ?, first_name = ?, last_name = ?, email = ? WHERE user_id = ?", 
-        [username, first_name, last_name, email, req.params.id])
-        console.log(row)
-        await conn.commit()
-        res.json({ message: "Update success" })
-    } catch (err) {
-        console.log(err)
-        await conn.rollback();
-        res.json(err)
-    } finally {
-        console.log('finally')
-        conn.release();
+    if (user_pic) {
+        try {
+            const [row] = await pool.query("UPDATE user SET username = ?, first_name = ?, last_name = ?, email = ?, user_pic = ? WHERE user_id = ?", 
+            [username, first_name, last_name, email, user_pic, req.params.id])
+            console.log(row)
+            await conn.commit()
+            res.json({ message: "Update success" })
+        } catch (err) {
+            console.log(err)
+            await conn.rollback();
+            res.json(err)
+        } finally {
+            console.log('finally')
+            conn.release();
+        }
+    }
+    else{
+        try {
+            const [row] = await pool.query("UPDATE user SET username = ?, first_name = ?, last_name = ?, email = ? WHERE user_id = ?", 
+            [username, first_name, last_name, email, req.params.id])
+            console.log(row)
+            await conn.commit()
+            res.json({ message: "Update success" })
+        } catch (err) {
+            console.log(err)
+            await conn.rollback();
+            res.json(err)
+        } finally {
+            console.log('finally')
+            conn.release();
+        }
     }
 })
 
