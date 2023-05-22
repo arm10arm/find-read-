@@ -1,6 +1,6 @@
 <script setup>
 import navcomp from '../components/navbar.vue'
-import axios from "axios";
+import axios from '@/plugins/axios';
 </script>
 
 <template>
@@ -25,7 +25,7 @@ import axios from "axios";
                 <td class="border-4 border-stone-500 justify-center" style="width:200px;"><img :src ="getimg(items.book_img)" style = "width:200px; height:200px;"></td>
                 <td class="border-4 border-stone-500" style="width: 300px;">
                     <router-link :to="{ name: 'editbook', params: { id: items.book_id } }"><button class = "bg-yellow-400 rounded-lg" style="width: 75px; height: 50px;">Edit</button></router-link>
-                    <button class="ml-4 bg-red-400 rounded-lg" style="width: 75px; height: 50px;">Delete</button>
+                    <button class="ml-4 bg-red-400 rounded-lg" style="width: 75px; height: 50px;" @click="deletebooks(items.book_id)">Delete</button>
                 </td>
             </tbody>
         </table>
@@ -56,6 +56,23 @@ export default {
     },
     getimg(img) {
       return "http://localhost:3000/" + img;
+    },
+    deletebooks(del){
+
+      this.items = this.items.filter((x) =>{
+        return x.book_id != del
+      })
+      alert("comp")
+      axios
+        .delete(`http://localhost:3000/books/${del}`, {
+        })
+        .then((response) => {
+          // this.items = response.data.books;
+          console.log(this.items)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   }
 }

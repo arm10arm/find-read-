@@ -28,8 +28,14 @@ router.post("/:id/comments",isLoggedIn,async function (req, res) {
       'INSERT INTO `commentssss` (`comment`, `book_id`, `comment_by_id`) VALUES (?, ?, ?)',
       [comment, req.params.id, req.user.user_id]
     )
+    const [data] = await conn.query(
+      'select * from commentssss c join `user` u on (c.comment_by_id = u.user_id) where comment_id = ?',
+      [rows1.insertId]
+    )
+    console.log(data[0]);
+
+    res.json(data[0])
     await conn.commit()
-    return res.json(success)
   } catch (err) {
     await conn.rollback();
     return res.status(500).json(err)

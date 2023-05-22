@@ -160,8 +160,9 @@ router.delete("/books/:id",isLoggedIn, async function (req, res) {
   await conn.beginTransaction();
   try{
     const[rows1] = await conn.query("delete from `books` where book_id = ?", [req.params.id])
-    await conn.commit()
     res.json({"message": "complete"})
+    await conn.commit()
+
   } catch (err) {
     console.log(err)
     await conn.rollback();

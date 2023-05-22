@@ -80,6 +80,7 @@ import axios from '@/plugins/axios';
                             </div>
                         </div>
                     </div>
+                    {{ comments }}
                     <!-- <h1 v-for="comment in comments">{{ comment.comment }}</h1> -->
                 </div>
             </div>
@@ -139,10 +140,12 @@ export default {
                     comment: this.comment,
                 })
                 .then((response) => {
-                    this.comment.push(response.data);
+                    console.log(response.data);
+                    this.comments.push(response.data);
+
                 })
                 .catch((error) => {
-                    this.error = error.response.data.message;
+                    // this.error = error.response.data.message;
                 });
             this.comment = "";
         },
@@ -159,6 +162,9 @@ export default {
                 });
         },
         deletecomm(want){
+            this.comments = this.comments.filter((x) =>{
+             return x.comment_id != want
+             })
             console.log(want)
             axios
                 .delete(`http://localhost:3000/comments/${want}`)
