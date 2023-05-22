@@ -7,23 +7,23 @@ import axios from '@/plugins/axios';
     <navcomp></navcomp>
     <div id="app">
 
-        <h1 class="text-5xl text-center text-black underline underline-offset-8">Book</h1><br><br>
+        <h1 class="text-5xl text-center text-black underline underline-offset-8">Book{{ likes }}</h1><br><br>
         <section class="w-full h-96 flex justify-center items-center">
             <div class="container h-full flex" style="width: 900px;">
                 <div class="left w-64">
                     <div class="img-container w-full h-80 flex justify-center">
                         <img :src="getimg(item.book_img)">
                     </div>
-                    <button v-if = "checklike(item, userofid) || user === null" class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
-                        style="font-family: 'Gloock', serif;" @click="addlike()">Like ({{
+                    <button v-if = "likes === 0 || user === null" class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
+                        style="font-family: 'Gloock', serif;" @click="createlike(item)">Like ({{
                             like.length }})</button>
                     <button class="bg-red-600 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
-                        style="font-family: 'Gloock', serif;" v-else @click="deletelike()">UnLike ({{
+                        style="font-family: 'Gloock', serif;" v-else @click="createlike(item)">UnLike ({{
                             like.length }})</button>
-                    <button v-if="checkwish(item, userofid) || user === null"  class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
+                    <button v-if=" status === 0 || user === null"  class="bg-zinc-900 w-full h-12 mt-4 rounded-lg text-2xl text-zinc-300"
                         style="font-family: 'Gloock', serif;" @click="createwish(item)">Add to
                         wishlist</button>
-                    <button v-else class="w-full bg-red-500 text-zinc-300	h-10 rounded-lg mt-5" @click = "deletewish(item.book_id)" >นำออกจาก
+                    <button v-else class="w-full bg-red-500 text-zinc-300	h-10 rounded-lg mt-5" @click = "createwish(item)" >นำออกจาก
                         Wishlist</button>
                 </div>
                 <div class="right ml-4" style="width: 600px;">
@@ -74,13 +74,12 @@ import axios from '@/plugins/axios';
                                 <button v-if="wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
                                     @click="wantedit = -1">cancel</button>
                                 <button v-if="wantedit === index" class="bg-yellow-400" style="height: 40px; width: 75px;"
-                                    @click="wantedit = -1; updatecomm()">Confirm</button>
+                                    @click="wantedit = -1; updatecomm(comments.comment_id)">Confirm</button>
                                 <button v-else class="bg-yellow-400" style="height: 40px; width: 75px;"
                                     @click="wantedit = index; commentedit = comments.comment">Edit</button>
                             </div>
                         </div>
                     </div>
-                    {{ comments }}
                     <!-- <h1 v-for="comment in comments">{{ comment.comment }}</h1> -->
                 </div>
             </div>
@@ -102,9 +101,9 @@ export default {
             like_of_id: {},
             wishlist: [],
             checkwishh: {},
-            checklikee:{},
+            likes: 0,
             user:null,
-            userofid : 0
+            status:0
         }
     },
     created() {
@@ -149,16 +148,21 @@ export default {
                 });
             this.comment = "";
         },
-        updatecomm() {
+        updatecomm(wantup) {
             axios
-                .put(`http://localhost:3000/${this.$route.params.id}/comments`, {
+                .put(`http://localhost:3000/comments/${wantup}`, {
                     comment: this.commentedit
                 })
                 .then((response) => {
-                    this.commentedit.push(response.data);
+                    this.comments = this.comments.map((x) =>{
+                if(x.comment_id === wantup){
+                    x.comment = this.commentedit
+                }
+                return x;
+             })
                 })
                 .catch((error) => {
-                    this.error = error.response.data.message;
+                    console.log(error)
                 });
         },
         deletecomm(want){
@@ -175,36 +179,30 @@ export default {
                     this.error = error.response.data.message;
                 });
         },
-        addlike(){
+        createlike(seen){
             axios
-            .post(`http://localhost:3000/like/${this.$route.params.id}`)
+            .post(`http://localhost:3000/like`, {sent:seen})
             .then((response) => {
+                    this.likes = response.data
                     console.log(response.data);
                 })
                 .catch((error) => {
-                    this.error = error.response.data.message;
-                });
-        },
-        deletelike(){
-            axios
-                .delete(`http://localhost:3000/comments/${this.$route.params.id}`)
-                .then((response) => {
-                    console.log(response)
-                })
-                .catch((error) => {
-                    this.error = error.response.data.message;
+                    console.log(error)
                 });
         },
         createwish(seen) {
-            console.log(seen)
+            // this.comments = this.comments.filter((x) =>{
+            //  return x.comment_id != seen
+            //  })
             axios.post("http://localhost:3000/wishlist", { sent: seen })
                 .then((response) => {
-                    console.log(response)
-                    this.$router.push({ path: '/wishlist' })
+                    this.status  = response.data
+                    console.log(response.data)
                 })
                 .catch((err) => {
                     console.log(err);
                 });
+                // this.checkwish(seen,user)
         },
         getwish() {
             axios
@@ -218,26 +216,6 @@ export default {
                     console.log(err);
                 })
         },
-        checkwish(send, user) {
-            console.log(user)
-            this.checkwishh = this.wishlist.filter(x => x.book_id === send.book_id && x.wishlist_by_id === user)
-            if (!(this.checkwishh.length > 0)) {
-                console.log(this.checkwishh.length)
-                return true
-            }
-            else {
-                return false
-            }
-        },
-        checklike(send2,user2) {
-            this.checklikee = this.like.filter(x => x.book_id === send2.book_id && x.like_by_id === user2)
-            if (!(this.checklikee.length > 0)) {
-                return true
-            }
-            else {
-                return false
-            }
-        },
         onAuthChange () {
             const token = localStorage.getItem('token')
             if (token) {
@@ -249,16 +227,6 @@ export default {
                 this.user = res.data
                 this.userofid = res.data.user_id
             })
-        },
-        deletewish(want2){
-            axios
-                .delete(`http://localhost:3000/wishlist/${want2}`)
-                .then((response) => {
-                    console.log(response)
-                })
-                .catch((error) => {
-                    this.error = error.response.data.message;
-                });
         }
     }
 }

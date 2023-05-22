@@ -66,7 +66,6 @@ const router = createRouter({
     {
       path: '/books/:id',
       name: 'books',
-      meta: { login: true, role: true },
       component: books
     },
     {
@@ -120,7 +119,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.login && !isLoggedIn) {
     next({ path: '/login' })
   }
-  
+
   if (to.meta.guest && isLoggedIn) {
     next({ path: '/home'})
   }
@@ -128,6 +127,6 @@ router.beforeEach((to, from, next) => {
   if (to.meta.role && isAdmin != 'admin') {
     next({ path: '/home'})
   }
-  
+
   next()
 })

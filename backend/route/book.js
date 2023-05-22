@@ -104,7 +104,7 @@ router.get("/book/:id", async function (req, res) {
       "select * from books where book_id = ?", [req.params.id]
     )
     const [row1] = await conn.query(
-      "SELECT * FROM `like` WHERE book_id=?", [req.params.id]
+      "SELECT * FROM `like` WHERE book_id=? and `like` = 1", [req.params.id]
     )
     await conn.commit()
     // console.log(row1)
@@ -161,7 +161,7 @@ router.delete("/books/:id",isLoggedIn, async function (req, res) {
   try{
     const[rows1] = await conn.query("delete from `books` where book_id = ?", [req.params.id])
     res.json({"message": "complete"})
-    await conn.commit()
+        await conn.commit()
 
   } catch (err) {
     console.log(err)
@@ -177,14 +177,31 @@ router.delete("/books/:id",isLoggedIn, async function (req, res) {
 //create book in wishlist
 router.post("/wishlist",isLoggedIn,async function (req, res) {
   const see = req.body.sent
+  console.log(req.user.user_id, see.book_name)
   const conn = await pool.getConnection()
   // Begin transaction
   await conn.beginTransaction();
   try {
-    const [rows, fields] = await conn.query("select * from books where book_id = ?", see.book_id)
-    const [rows2, fields2] = await conn.query("insert into `wishlist`(wishlist_by_id, book_name, book_type, book_img,book_id, author, publisher) values(?,?,?,?,?,?,?)", [req.user.user_id,rows[0].book_name, rows[0].book_type, rows[0].book_img, see.book_id, rows[0].author, rows[0].publisher])
-    console.log(rows2)
+    const [rows0] = await conn.query("select * from `wishlist` where wishlist_by_id  = ? and book_id = ?", [req.user.user_id, see.book_id])
+    console.log(rows0)
+   if(rows0.length === 0){
+    const [rows2, fields2] = await conn.query("insert into `wishlist`(wishlist_by_id, book_name, book_type, book_img,book_id, author, publisher, status) values(?,?,?,?,?,?,?,?)", [req.user.user_id,see.book_name, see.book_type, see.book_img, see.book_id, see.author, see.publisher,1])
     await conn.commit()
+    return res.json(rows0[0].status)
+   }
+   else{
+
+    if(rows0[0].status === 1){
+      const [up] = await conn.query('update `wishlist` set status = ? where wishlist_by_id = ? and book_id = ?', [0, req.user.user_id, see.book_id])
+      await conn.commit()
+      console.log("hello")
+      return res.json(rows0[0].status)
+    }else{
+      const [down] = await conn.query('update `wishlist` set status = ? where wishlist_by_id = ? and book_id = ?', [1, req.user.user_id, see.book_id])
+      await conn.commit()
+      return res.json(rows0[0].status)
+    }
+   }
   } catch (err) {
     console.log(err)
     await conn.rollback();
@@ -220,70 +237,41 @@ router.get("/wishlist", isLoggedIn,async function (req, res) {
 
 
 //create like
-router.post("/like/:id", isLoggedIn,async function (req, res) {
+router.post("/like", isLoggedIn,async function (req, res) {
+  const see = req.body.sent
+  console.log(req.user.user_id, see.book_id)
   const conn = await pool.getConnection()
   // Begin transaction
   await conn.beginTransaction();
   try {
-    const [create] = await conn.query("insert into `like`(like_by_id,book_id, `like`) values(?,?,1)", [req.user.user_id, req.params.id])
-    console.log(create)
+    const [rows0] = await conn.query("select * from `like` where like_by_id  = ? and book_id = ?", [req.user.user_id, see.book_id])
+   if(rows0.length === 0){
+    const [rows2, fields2] = await conn.query("insert into `like`(like_by_id, book_id, `like`) values(?,?,?)", [req.user.user_id,see.book_id,1])
     await conn.commit()
-    res.json({
-      message: "complete"
-    });
-  }
-  catch (err) {
+    return res.json(rows0[0].like)
+   }
+   else{
+    if(rows0[0].like){
+      const [up] = await conn.query('update `like` set `like` = ? where like_by_id = ? and book_id = ?', [rows0[0].like - 1, req.user.user_id, see.book_id])
+      await conn.commit()
+
+      return res.json(rows0[0].like)
+    }else{
+      const [down] = await conn.query('update `like` set `like` = ? where like_by_id = ? and book_id = ?', [rows0[0].like + 1, req.user.user_id, see.book_id])
+      await conn.commit()
+
+      return res.json(rows0[0].like)
+    }
+   }
+  } catch (err) {
     console.log(err)
     await conn.rollback();
-  }
-  finally {
-    console.log('finally')
-    conn.release();
-  }
-})
-
-//delete like
-router.delete("/like/:id", isLoggedIn,async function (req, res) {
-
-  const conn = await pool.getConnection()
-  // Begin transaction
-  await conn.beginTransaction();
-  try{
-    const [rows1] = await conn.query("delete from `wishlist` where book_id = ? and wishlist_by_id = ?", [req.params.id,req.user.user_id])
-    await conn.commit()
-    res.json({"mess":"comp"})
-  }catch (err) {
-    console.log(err)
-    await conn.rollback();
-  }
-  finally {
+  } finally {
     console.log('finally')
     conn.release();
   }
 
-
 })
 
-//delete wishlist
-router.delete("/wishlist/:id", isLoggedIn,async function (req, res) {
-
-  const conn = await pool.getConnection()
-  // Begin transaction
-  await conn.beginTransaction();
-  try{
-    const [rows1] = await conn.query("delete from `wishlist` where book_id = ? and wishlist_by_id = ?", [req.params.id,req.user.user_id])
-    await conn.commit()
-    res.json({"mess":"comp"})
-  }catch (err) {
-    console.log(err)
-    await conn.rollback();
-  }
-  finally {
-    console.log('finally')
-    conn.release();
-  }
-
-
-})
 
 exports.router = router;

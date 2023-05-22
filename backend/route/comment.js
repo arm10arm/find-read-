@@ -62,6 +62,7 @@ router.get("/comments/:id",async function (req, res) {
 //update comments
 router.put("/comments/:id", isLoggedIn,async function (req, res) {
 
+    console.log("hello")
   try {
     await commentSchema.validateAsync(req.body, { abortEarly: false })
   } catch (err) {
